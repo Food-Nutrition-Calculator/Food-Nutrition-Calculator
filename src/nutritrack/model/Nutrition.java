@@ -14,16 +14,10 @@ public class Nutrition {
     private double totalCarbs;
     private double totalFats;
 
-    /**
-     * Default constructor initializing all macronutrients to 0.0.
-     */
     public Nutrition() {
         this(0.0, 0.0, 0.0, 0.0);
     }
 
-    /**
-     * Parameterized constructor.
-     */
     public Nutrition(double totalCalories, double totalProtein, double totalCarbs, double totalFats) {
         setTotalCalories(totalCalories);
         setTotalProtein(totalProtein);
@@ -34,10 +28,6 @@ public class Nutrition {
     /**
      * Factory method: Computes scaled nutrition for a given FoodItem based on entered quantity.
      * Formula: Scaled = Base * (Quantity / DefaultServingSize)
-     *
-     * @param food The base FoodItem
-     * @param quantity The portion quantity entered by the user
-     * @return A new Nutrition instance with calculated values
      */
     public static Nutrition scale(FoodItem food, double quantity) {
         if (food == null) {
@@ -46,11 +36,12 @@ public class Nutrition {
         if (quantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative.");
         }
-        if (food.getDefaultServingSize() <= 0) {
-            throw new IllegalArgumentException("Default serving size of food must be positive.");
+        double serving = food.getDefaultServingSize();
+        if (serving <= 0) {
+            serving = 100.0;
         }
 
-        double ratio = quantity / food.getDefaultServingSize();
+        double ratio = quantity / serving;
         double scaledCalories = round(food.getCalories() * ratio);
         double scaledProtein = round(food.getProtein() * ratio);
         double scaledCarbs = round(food.getCarbohydrates() * ratio);
@@ -60,11 +51,14 @@ public class Nutrition {
     }
 
     /**
-     * Adds another Nutrition object to this one and returns a new combined Nutrition object.
-     *
-     * @param other The other Nutrition object to sum
-     * @return A new aggregated Nutrition instance
+     * Overloaded helper for scaling directly with raw numbers.
      */
+    public static Nutrition scale(double cal, double prot, double carbs, double fats, double defaultServing, double quantity) {
+        if (defaultServing <= 0) defaultServing = 100.0;
+        double ratio = quantity / defaultServing;
+        return new Nutrition(round(cal * ratio), round(prot * ratio), round(carbs * ratio), round(fats * ratio));
+    }
+
     public Nutrition add(Nutrition other) {
         if (other == null) {
             return new Nutrition(this.totalCalories, this.totalProtein, this.totalCarbs, this.totalFats);
@@ -81,71 +75,37 @@ public class Nutrition {
         return Math.round(value * 100.0) / 100.0;
     }
 
-    // --- Getters and Setters ---
+    public double getTotalCalories() { return totalCalories; }
+    public void setTotalCalories(double totalCalories) { this.totalCalories = Math.max(0.0, round(totalCalories)); }
 
-    public double getTotalCalories() {
-        return totalCalories;
-    }
+    public double getTotalProtein() { return totalProtein; }
+    public void setTotalProtein(double totalProtein) { this.totalProtein = Math.max(0.0, round(totalProtein)); }
 
-    public void setTotalCalories(double totalCalories) {
-        if (totalCalories < 0) {
-            throw new IllegalArgumentException("Calories cannot be negative.");
-        }
-        this.totalCalories = round(totalCalories);
-    }
+    public double getTotalCarbs() { return totalCarbs; }
+    public void setTotalCarbs(double totalCarbs) { this.totalCarbs = Math.max(0.0, round(totalCarbs)); }
 
-    public double getTotalProtein() {
-        return totalProtein;
-    }
-
-    public void setTotalProtein(double totalProtein) {
-        if (totalProtein < 0) {
-            throw new IllegalArgumentException("Protein cannot be negative.");
-        }
-        this.totalProtein = round(totalProtein);
-    }
-
-    public double getTotalCarbs() {
-        return totalCarbs;
-    }
-
-    public void setTotalCarbs(double totalCarbs) {
-        if (totalCarbs < 0) {
-            throw new IllegalArgumentException("Carbohydrates cannot be negative.");
-        }
-        this.totalCarbs = round(totalCarbs);
-    }
-
-    public double getTotalFats() {
-        return totalFats;
-    }
-
-    public void setTotalFats(double totalFats) {
-        if (totalFats < 0) {
-            throw new IllegalArgumentException("Fats cannot be negative.");
-        }
-        this.totalFats = round(totalFats);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Calories: %.1f kcal | Protein: %.1fg | Carbs: %.1fg | Fats: %.1fg",
-                totalCalories, totalProtein, totalCarbs, totalFats);
-    }
+    public double getTotalFats() { return totalFats; }
+    public void setTotalFats(double totalFats) { this.totalFats = Math.max(0.0, round(totalFats)); }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Nutrition nutrition = (Nutrition) o;
-        return Double.compare(nutrition.totalCalories, totalCalories) == 0 &&
-               Double.compare(nutrition.totalProtein, totalProtein) == 0 &&
-               Double.compare(nutrition.totalCarbs, totalCarbs) == 0 &&
-               Double.compare(nutrition.totalFats, totalFats) == 0;
+        Nutrition that = (Nutrition) o;
+        return Double.compare(that.totalCalories, totalCalories) == 0 &&
+               Double.compare(that.totalProtein, totalProtein) == 0 &&
+               Double.compare(that.totalCarbs, totalCarbs) == 0 &&
+               Double.compare(that.totalFats, totalFats) == 0;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(totalCalories, totalProtein, totalCarbs, totalFats);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Nutrition[Calories=%.1f, Protein=%.1fg, Carbs=%.1fg, Fats=%.1fg]",
+                totalCalories, totalProtein, totalCarbs, totalFats);
     }
 }

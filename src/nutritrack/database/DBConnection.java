@@ -21,7 +21,7 @@ public class DBConnection {
     
     // Default MySQL credentials (can be overridden via environment variables or modified here)
     private static String user = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "root";
-    private static String password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "root";
+    private static String password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "221206";
 
     private static Connection connection = null;
 

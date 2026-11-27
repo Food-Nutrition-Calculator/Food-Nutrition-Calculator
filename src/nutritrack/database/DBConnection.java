@@ -1,4 +1,4 @@
-package nutritrack.database;
+﻿﻿package nutritrack.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,7 +21,7 @@ public class DBConnection {
     
     // Default MySQL credentials (can be overridden via environment variables or modified here)
     private static String user = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "root";
-    private static String password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "Yashna@2007";
+    private static String password = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "";
 
     private static Connection connection = null;
 

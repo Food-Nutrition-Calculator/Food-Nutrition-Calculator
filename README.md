@@ -8,45 +8,53 @@ A desktop dietary management and nutrition calculation application built with **
 
 ```
 Food-Nutrition-Calculator/
-|-- database/
-|   |-- schema.sql                       # Database initialization script + seed data
-|-- src/
-|   |-- nutritrack/
-|       |-- Phase0Verification.java      # Phase 0 verification test runner
-|       |
-|       |-- model/                       # Domain Entity Layer
-|       |   |-- FoodItem.java            # [Member 1] Food item profile & serving size
-|       |   |-- MealItem.java            # [Member 2] Food item portion wrapper
-|       |   |-- Meal.java                # [Member 2] Composite meal collection & timestamp
-|       |   |-- Nutrition.java           # [Member 3] Calories & macronutrient calculations
-|       |
-|       |-- database/                    # Data Access Layer (DAO)
-|       |   |-- DBConnection.java        # [Member 4] Singleton JDBC connection manager
-|       |   |-- FoodDAO.java             # [Member 1] CRUD for food_items
-|       |   |-- MealDAO.java             # [Member 2] Transactional meal persistence
-|       |   |-- HistoryDAO.java          # [Member 4] Analytical SQL queries (SUM, JOIN)
-|       |
-|       |-- service/                     # Business Logic Layer
-|       |   |-- FoodService.java         # [Member 1] Food search, sorting & validation
-|       |   |-- MealService.java         # [Member 2] Meal composition & rules
-|       |   |-- NutritionService.java    # [Member 3] Macro scaling & percentage math
-|       |   |-- HistoryService.java      # [Member 4] Daily nutrition aggregations
-|       |
-|       |-- ui/                          # Presentation Layer (Java Swing)
-|       |   |-- MainFrame.java           # [Member 4] Main application window & navigation
-|       |   |-- FoodManagementPanel.java # [Member 1] Food CRUD table & search GUI
-|       |   |-- MealCreationPanel.java   # [Member 2] Interactive meal builder GUI
-|       |   |-- NutritionDashboardPanel.java # [Member 3] Daily metrics & macro breakdown
-|       |   |-- MealHistoryPanel.java    # [Member 4] Historical calendar log GUI
-|       |
-|       |-- utils/                       # Shared Utilities
-|           |-- ValidationUtils.java     # User input sanitization
-|           |-- DateUtils.java           # LocalDate to SQL Date conversions
-|           |-- UIConstants.java         # Color palette & font styles
-```
-
----
-
+│
+├── .gitignore
+├── README.md
+│
+├── database/
+│   ├── schema.sql
+│   └── queries.sql
+│
+├── web/
+│   ├── foods.html
+│   ├── meals.html
+│   ├── nutrition.html
+│   └── history.html
+│
+└── src/
+    └── nutritrack/
+        ├── NutriTrackApp.java
+        │
+        ├── model/
+        │   ├── FoodItem.java
+        │   ├── MealItem.java
+        │   ├── Meal.java
+        │   └── Nutrition.java
+        │
+        ├── database/
+        │   ├── DBConnection.java
+        │   ├── FoodDAO.java
+        │   ├── MealDAO.java
+        │   └── HistoryDAO.java
+        │
+        ├── service/
+        │   ├── FoodService.java
+        │   ├── MealService.java
+        │   ├── NutritionService.java
+        │   └── HistoryService.java
+        │
+        ├── ui/
+        │   ├── MainFrame.java
+        │   ├── FoodManagementPanel.java
+        │   ├── MealCreationPanel.java
+        │   ├── NutritionDashboardPanel.java
+        │   └── MealHistoryPanel.java
+        │
+        └── utils/
+            ├── ValidationUtils.java
+            ├── DateUtils.java
+            └── UIConstants.java
 ## 🚀 Setup & Execution Guide
 
 ### 1. Database Initialization
@@ -82,10 +90,10 @@ java -cp bin nutritrack.Phase0Verification
 
 | Member | Module | Key Responsibilities |
 | :--- | :--- | :--- |
-| **Member 1** | Food Management | `FoodItem`, `FoodDAO`, `FoodService`, `FoodManagementPanel` |
-| **Member 2** | Meal Management | `Meal`, `MealItem`, `MealDAO`, `MealService`, `MealCreationPanel` |
-| **Member 3** | Nutrition Engine | `Nutrition`, `NutritionService`, `NutritionDashboardPanel` |
-| **Member 4** | DB & Integration | `DBConnection`, `HistoryDAO`, `HistoryService`, `MainFrame`, `MealHistoryPanel` |
+| **Member 1** | Food Management | `FoodItem`, `FoodDAO`, `FoodService`, `FoodManagementPanel` ,`food.html`|
+| **Member 2** | Meal Management | `Meal`, `MealItem`, `MealDAO`, `MealService`, `MealCreationPanel`,`meal.html` |
+| **Member 3** | Nutrition Engine | `Nutrition`, `NutritionService`, `NutritionDashboardPanel` ,`nutrition.html`|
+| **Member 4** | DB & Integration | `DBConnection`, `HistoryDAO`, `HistoryService`, `MainFrame`, `MealHistoryPanel`,'history.html' |
 ## Getting Started
 
 Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.

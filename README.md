@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Food Nutrition Calculator (NutriTrack)
 
 A desktop dietary management and nutrition calculation application built with **Java Swing, JDBC, and MySQL**, developed by a 4-member student team.
@@ -104,3 +105,7 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 ## Dependency Management
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+=======
+# Food-Nutrition-Calculator
+Food Nutrition Calculator is a Java-based application designed to help users understand the nutritional value of food. It calculates nutritional information such as calories, proteins, carbohydrates, and fats based on food items and their quantities. The project aims to make food nutrition tracking easier and promote awareness of health.
+>>>>>>> 2bc070703e59d0eb5386bf631a50386d96e31317

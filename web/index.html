@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriTrack - Food Nutrition Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🥗</span>
+                <span class="logo-text">Nutri<strong>Track</strong></span>
+            </div>
+            <nav class="nav-links">
+                <button class="nav-btn active" data-tab="foods">Food Catalog</button>
+                <button class="nav-btn" data-tab="meals">Meal Builder</button>
+                <button class="nav-btn" data-tab="dashboard">Nutrition Dashboard</button>
+                <button class="nav-btn" data-tab="history">Meal History</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <main class="main-content">
+        <!-- ======================================================= -->
+        <!-- TAB 1: FOOD CATALOG MANAGEMENT (Member 1 - Active)      -->
+        <!-- ======================================================= -->
+        <section id="tab-foods" class="tab-content active">
+            <div class="page-header">
+                <div>
+                    <h2>Food Catalog Management</h2>
+                    <p class="subtitle">Register and manage food items with nutritional profiles per standard serving size.</p>
+                </div>
+                <div class="badge-role">Member 1 Module</div>
+            </div>
+
+            <div class="grid-layout">
+                <!-- Left: Food Entry Form -->
+                <div class="card form-card">
+                    <div class="card-header">
+                        <h3>Add New Food Item</h3>
+                    </div>
+                    <form id="addFoodForm">
+                        <div class="form-group">
+                            <label for="foodName">Food Name <span class="required">*</span></label>
+                            <input type="text" id="foodName" name="foodName" placeholder="e.g. Rolled Oats, Grilled Chicken" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="servingUnit">Serving Unit</label>
+                                <select id="servingUnit" name="servingUnit">
+                                    <option value="grams">grams (g)</option>
+                                    <option value="ml">milliliters (ml)</option>
+                                    <option value="cup">cup</option>
+                                    <option value="pieces">pieces</option>
+                                    <option value="tablespoon">tablespoon</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="defaultServingSize">Default Serving Size <span class="required">*</span></label>
+                                <input type="number" id="defaultServingSize" name="defaultServingSize" value="100" min="1" step="any" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="calories">Calories (kcal) <span class="required">*</span></label>
+                                <input type="number" id="calories" name="calories" placeholder="e.g. 165" min="0" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="protein">Protein (g) <span class="required">*</span></label>
+                                <input type="number" id="protein" name="protein" placeholder="e.g. 31.0" min="0" step="any" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="carbohydrates">Carbohydrates (g) <span class="required">*</span></label>
+                                <input type="number" id="carbohydrates" name="carbohydrates" placeholder="e.g. 0.0" min="0" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fats">Fats (g) <span class="required">*</span></label>
+                                <input type="number" id="fats" name="fats" placeholder="e.g. 3.6" min="0" step="any" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="btnSubmitFood">
+                                <span>+ Add Food Item</span>
+                            </button>
+                            <button type="reset" class="btn btn-secondary">Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right: Food Catalog Table with Search & Sort -->
+                <div class="card table-card">
+                    <div class="card-header flex-header">
+                        <h3>Food Database (<span id="foodCount">0</span> items)</h3>
+                        <div class="table-controls">
+                            <!-- Search -->
+                            <div class="search-box">
+                                <input type="text" id="foodSearch" placeholder="🔍 Search food by name...">
+                            </div>
+                            <!-- Sort -->
+                            <div class="sort-box">
+                                <label for="foodSort">Sort:</label>
+                                <select id="foodSort">
+                                    <option value="NAME">Name</option>
+                                    <option value="CALORIES">Calories</option>
+                                    <option value="PROTEIN">Protein</option>
+                                    <option value="CARBS">Carbohydrates</option>
+                                    <option value="FATS">Fats</option>
+                                </select>
+                                <button id="btnToggleOrder" class="btn btn-icon" title="Toggle Ascending/Descending">
+                                    <span id="sortOrderIcon">↓ Desc</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Responsive Wrapper -->
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Food Name</th>
+                                    <th>Serving</th>
+                                    <th>Calories</th>
+                                    <th>Protein</th>
+                                    <th>Carbs</th>
+                                    <th>Fats</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="foodTableBody">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">Loading foods from MySQL database...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Placeholders for upcoming members (Tabs 2, 3, 4) -->
+        <section id="tab-meals" class="tab-content">
+            <div class="placeholder-card">
+                <div class="placeholder-icon">🍱</div>
+                <h2>Meal Builder Module (Member 2)</h2>
+                <p>This section is scheduled for Member 2. It will allow composing meals, scaling portions, and saving meals to MySQL.</p>
+            </div>
+        </section>
+
+        <section id="tab-dashboard" class="tab-content">
+            <div class="placeholder-card">
+                <div class="placeholder-icon">📊</div>
+                <h2>Nutrition Dashboard Module (Member 3)</h2>
+                <p>This section is scheduled for Member 3. It will display daily intake cards and macronutrient percentage breakdowns.</p>
+            </div>
+        </section>
+
+        <section id="tab-history" class="tab-content">
+            <div class="placeholder-card">
+                <div class="placeholder-icon">🕒</div>
+                <h2>Meal History Module (Member 4)</h2>
+                <p>This section is scheduled for Member 4. It will display historical records and aggregate reports by date.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>NutriTrack &bull; Java & Web Programming College Project &bull; Built with HTML, CSS, Java & MySQL</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

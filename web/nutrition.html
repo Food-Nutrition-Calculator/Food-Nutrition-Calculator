@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NutriTrack – Member 3 Nutrition Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f8f1; color: #212121; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        .header h1 { font-size: 1.6rem; font-weight: 700; }
+        .header p  { font-size: 0.9rem; opacity: 0.9; }
+        .container { max-width: 1050px; margin: 0 auto; padding: 24px 20px; }
+
+        .date-bar { background: white; border-radius: 12px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; flex-wrap: wrap; }
+        .date-bar label { font-weight: 700; color: #1b5e20; }
+        .date-bar input[type="date"] { border: 2px solid #c8e6c9; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
+        .btn { padding: 9px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #2e7d32; color: white; }
+        .btn-primary:hover { background: #1b5e20; }
+        .btn-secondary { background: #e8f5e9; color: #2e7d32; border: 2px solid #c8e6c9; }
+        .btn-secondary:hover { background: #c8e6c9; }
+
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
+        .kpi-card { background: white; border-radius: 12px; padding: 18px 18px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid; }
+        .kpi-card.calories  { border-color: #2e7d32; }
+        .kpi-card.protein   { border-color: #1565c0; }
+        .kpi-card.carbs     { border-color: #e65100; }
+        .kpi-card.fats      { border-color: #6a1b9a; }
+        .kpi-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #757575; margin-bottom: 6px; }
+        .kpi-value { font-size: 1.9rem; font-weight: 800; line-height: 1.1; }
+        .kpi-unit { font-size: 0.95rem; font-weight: 400; color: #9e9e9e; margin-left: 2px; }
+        .kpi-card.calories .kpi-value  { color: #2e7d32; }
+        .kpi-card.protein  .kpi-value  { color: #1565c0; }
+        .kpi-card.carbs    .kpi-value  { color: #e65100; }
+        .kpi-card.fats     .kpi-value  { color: #6a1b9a; }
+
+        .macro-section { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
+        .macro-section h3 { font-size: 1rem; font-weight: 700; color: #1b5e20; margin-bottom: 16px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+        .macro-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .macro-name { width: 120px; font-weight: 700; font-size: 0.9rem; }
+        .macro-pct { width: 50px; font-size: 0.95rem; font-weight: 700; text-align: right; }
+        .macro-bar-bg { flex: 1; height: 14px; background: #eee; border-radius: 7px; overflow: hidden; }
+        .macro-bar-fill { height: 100%; border-radius: 7px; transition: width 0.5s ease; }
+        .bar-protein { background: #1565c0; }
+        .bar-carbs   { background: #e65100; }
+        .bar-fats    { background: #6a1b9a; }
+        .macro-g { width: 60px; font-size: 0.85rem; color: #757575; text-align: right; }
+        .macro-name.protein { color: #1565c0; }
+        .macro-name.carbs   { color: #e65100; }
+        .macro-name.fats    { color: #6a1b9a; }
+
+        .meals-section { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
+        .meals-section h3 { font-size: 1rem; font-weight: 700; color: #1b5e20; margin-bottom: 14px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+        thead th { background: #e8f5e9; padding: 10px 12px; text-align: left; font-weight: 700; color: #2e7d32; text-transform: uppercase; font-size: 0.82rem; }
+        tbody tr { border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background: #f8fcf8; }
+        tbody td { padding: 10px 12px; }
+        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; border-radius: 12px; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; border: 1px solid #c8e6c9; }
+        .status-bar { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2e7d32; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>📊 Nutrition Dashboard</h1>
+        <p>Macronutrient Distribution & Daily Intake — Member 3</p>
+    </div>
+    <span class="badge" style="background:white; color:#1b5e20; font-size:0.85rem;">Port: 8080 Active</span>
+</div>
+
+<div class="container">
+    <div class="date-bar">
+        <label for="dateInput">📅 Select Date:</label>
+        <input type="date" id="dateInput" />
+        <button class="btn btn-primary" onclick="loadNutrition()">Load Summary</button>
+        <button class="btn btn-secondary" onclick="loadToday()">Today</button>
+    </div>
+
+    <div class="kpi-row">
+        <div class="kpi-card calories">
+            <div class="kpi-label">🔥 Total Calories</div>
+            <div class="kpi-value" id="totalCalories">0<span class="kpi-unit">kcal</span></div>
+        </div>
+        <div class="kpi-card protein">
+            <div class="kpi-label">💪 Protein</div>
+            <div class="kpi-value" id="totalProtein">0<span class="kpi-unit">g</span></div>
+        </div>
+        <div class="kpi-card carbs">
+            <div class="kpi-label">🌾 Carbohydrates</div>
+            <div class="kpi-value" id="totalCarbs">0<span class="kpi-unit">g</span></div>
+        </div>
+        <div class="kpi-card fats">
+            <div class="kpi-label">🥑 Fats</div>
+            <div class="kpi-value" id="totalFats">0<span class="kpi-unit">g</span></div>
+        </div>
+    </div>
+
+    <div class="macro-section">
+        <h3>⚖️ Macronutrient Distribution (% of Total Calories)</h3>
+        <div class="macro-row">
+            <span class="macro-name protein">💪 Protein</span>
+            <span class="macro-pct" id="proteinPct">0%</span>
+            <div class="macro-bar-bg"><div class="macro-bar-fill bar-protein" id="proteinBar" style="width:0%"></div></div>
+            <span class="macro-g" id="proteinG">0 g</span>
+        </div>
+        <div class="macro-row">
+            <span class="macro-name carbs">🌾 Carbs</span>
+            <span class="macro-pct" id="carbsPct">0%</span>
+            <div class="macro-bar-bg"><div class="macro-bar-fill bar-carbs" id="carbsBar" style="width:0%"></div></div>
+            <span class="macro-g" id="carbsG">0 g</span>
+        </div>
+        <div class="macro-row">
+            <span class="macro-name fats">🥑 Fats</span>
+            <span class="macro-pct" id="fatsPct">0%</span>
+            <div class="macro-bar-bg"><div class="macro-bar-fill bar-fats" id="fatsBar" style="width:0%"></div></div>
+            <span class="macro-g" id="fatsG">0 g</span>
+        </div>
+    </div>
+
+    <div class="meals-section">
+        <h3>🍽️ Daily Meal Breakdown &nbsp;<span class="badge" id="mealCountBadge">0 meals</span></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Meal Name</th>
+                    <th>Calories (kcal)</th>
+                    <th>Protein (g)</th>
+                    <th>Carbs (g)</th>
+                    <th>Fats (g)</th>
+                    <th>Items</th>
+                </tr>
+            </thead>
+            <tbody id="mealsTableBody">
+                <tr><td colspan="6" style="text-align:center; padding:25px; color:#9e9e9e;">Loading data...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+        Ready. Connected to Member 3 Nutrition Calculation Server.
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8080';
+
+    window.onload = function () {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dateInput').value = today;
+        loadNutrition();
+    };
+
+    function loadToday() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dateInput').value = today;
+        loadNutrition();
+    }
+
+    async function loadNutrition() {
+        const date = document.getElementById('dateInput').value;
+        if (!date) return;
+        document.getElementById('statusBar').textContent = '⏳ Loading calculation for ' + date + ' ...';
+
+        try {
+            const res = await fetch(`${API_BASE}/api/nutrition?date=${date}`);
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const data = await res.json();
+            renderDashboard(data);
+        } catch (err) {
+            document.getElementById('statusBar').textContent = '❌ Failed to connect to server: ' + err.message;
+            document.getElementById('statusBar').style.background = '#ffebee';
+            document.getElementById('statusBar').style.color = '#c62828';
+        }
+    }
+
+    function renderDashboard(data) {
+        document.getElementById('totalCalories').innerHTML = data.totalCalories.toFixed(1) + '<span class="kpi-unit">kcal</span>';
+        document.getElementById('totalProtein').innerHTML = data.totalProtein.toFixed(1) + '<span class="kpi-unit">g</span>';
+        document.getElementById('totalCarbs').innerHTML = data.totalCarbs.toFixed(1) + '<span class="kpi-unit">g</span>';
+        document.getElementById('totalFats').innerHTML = data.totalFats.toFixed(1) + '<span class="kpi-unit">g</span>';
+
+        setBar('protein', data.proteinPct || 0, data.totalProtein);
+        setBar('carbs',   data.carbsPct   || 0, data.totalCarbs);
+        setBar('fats',    data.fatsPct    || 0, data.totalFats);
+
+        const tbody = document.getElementById('mealsTableBody');
+        document.getElementById('mealCountBadge').textContent = (data.mealCount || 0) + ' meals';
+
+        if (!data.meals || data.meals.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:25px; color:#9e9e9e;">No meals logged on ${data.date}.</td></tr>`;
+        } else {
+            tbody.innerHTML = data.meals.map(m => `
+                <tr>
+                    <td><strong>🍱 ${m.mealName}</strong></td>
+                    <td><strong>${m.calories.toFixed(1)}</strong></td>
+                    <td>${m.protein.toFixed(1)}</td>
+                    <td>${m.carbs.toFixed(1)}</td>
+                    <td>${m.fats.toFixed(1)}</td>
+                    <td><span class="badge">${m.itemCount} items</span></td>
+                </tr>
+            `).join('');
+        }
+
+        const bar = document.getElementById('statusBar');
+        bar.textContent = `✅ Calculated Daily Nutrition for ${data.date} (Total: ${data.totalCalories.toFixed(1)} kcal)`;
+        bar.style.background = '#e8f5e9';
+        bar.style.color = '#2e7d32';
+    }
+
+    function setBar(id, pct, grams) {
+        document.getElementById(id + 'Pct').textContent = pct.toFixed(1) + '%';
+        document.getElementById(id + 'Bar').style.width = Math.min(pct, 100) + '%';
+        document.getElementById(id + 'G').textContent = (grams || 0).toFixed(1) + ' g';
+    }
+</script>
+</body>
+</html>

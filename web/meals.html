@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NutriTrack – Member 2 Meal Builder</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f8f1; color: #212121; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        .header h1 { font-size: 1.6rem; font-weight: 700; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px; }
+
+        .card { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
+        .card h2 { font-size: 1.15rem; color: #1b5e20; margin-bottom: 16px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+
+        .form-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+        .form-row label { font-weight: 700; font-size: 0.9rem; color: #1b5e20; }
+        .form-row input, .form-row select { border: 2px solid #c8e6c9; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
+        .form-row input:focus, .form-row select:focus { border-color: #2e7d32; }
+
+        .btn { padding: 9px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #2e7d32; color: white; }
+        .btn-primary:hover { background: #1b5e20; }
+        .btn-danger { background: #c62828; color: white; padding: 4px 10px; font-size: 0.8rem; border-radius: 6px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 10px; }
+        thead th { background: #e8f5e9; padding: 10px 12px; text-align: left; font-weight: 700; color: #2e7d32; text-transform: uppercase; font-size: 0.82rem; }
+        tbody tr { border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background: #f8fcf8; }
+        tbody td { padding: 10px 12px; }
+
+        .total-bar { display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; padding: 14px 20px; border-radius: 10px; font-weight: 700; margin-top: 15px; color: #1b5e20; font-size: 1.05rem; }
+        .status-bar { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2e7d32; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>🍱 Meal Builder & Planning</h1>
+        <p>Member 2 – Create Daily Meals & Enter Serving Quantities</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2>1. Configure Meal</h2>
+        <div class="form-row">
+            <label for="mealName">Meal Name:</label>
+            <input type="text" id="mealName" value="Breakfast" placeholder="e.g. Breakfast, Lunch" />
+
+            <label for="mealDate">Date:</label>
+            <input type="date" id="mealDate" />
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>2. Select Food & Enter Serving Quantity</h2>
+        <div class="form-row">
+            <label for="foodSelect">Food Item:</label>
+            <select id="foodSelect">
+                <option value="1" data-cal="389" data-p="16.9" data-c="66.3" data-f="6.9" data-serving="100">Oatmeal (100g base = 389 kcal)</option>
+                <option value="2" data-cal="78" data-p="6.3" data-c="0.6" data-f="5.3" data-serving="1">Whole Egg (1 unit base = 78 kcal)</option>
+                <option value="3" data-cal="165" data-p="31.0" data-c="0.0" data-f="3.6" data-serving="100">Chicken Breast (100g base = 165 kcal)</option>
+                <option value="4" data-cal="111" data-p="2.6" data-c="23.0" data-f="0.9" data-serving="100">Brown Rice (100g base = 111 kcal)</option>
+            </select>
+
+            <label for="quantity">Quantity (g/units):</label>
+            <input type="number" id="quantity" value="100" min="1" style="width: 100px;" />
+
+            <button class="btn btn-primary" onclick="addFoodItem()">+ Add to Meal</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Food Item</th>
+                    <th>Entered Quantity</th>
+                    <th>Calories (kcal)</th>
+                    <th>Protein (g)</th>
+                    <th>Carbs (g)</th>
+                    <th>Fats (g)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="mealItemsBody">
+                <tr><td colspan="7" style="text-align:center; padding:20px; color:#9e9e9e;">No food items added yet.</td></tr>
+            </tbody>
+        </table>
+
+        <div class="total-bar">
+            <span>Meal Total:</span>
+            <span id="mealTotals">0.0 kcal | Protein: 0.0g | Carbs: 0.0g | Fats: 0.0g</span>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+        Ready. Member 2 Meal Builder active. Enter quantity to scale nutritional values.
+    </div>
+</div>
+
+<script>
+    window.onload = function () {
+        document.getElementById('mealDate').value = new Date().toISOString().split('T')[0];
+    };
+
+    let items = [];
+
+    function addFoodItem() {
+        const select = document.getElementById('foodSelect');
+        const opt = select.options[select.selectedIndex];
+        const foodName = opt.text.split('(')[0].trim();
+        const cal = parseFloat(opt.dataset.cal);
+        const p = parseFloat(opt.dataset.p);
+        const c = parseFloat(opt.dataset.c);
+        const f = parseFloat(opt.dataset.f);
+        const serving = parseFloat(opt.dataset.serving);
+        const qty = parseFloat(document.getElementById('quantity').value) || 100;
+
+        const ratio = qty / serving;
+        const item = {
+            id: Date.now(),
+            name: foodName,
+            qty: qty,
+            cal: cal * ratio,
+            p: p * ratio,
+            c: c * ratio,
+            f: f * ratio
+        };
+
+        items.push(item);
+        renderTable();
+    }
+
+    function removeItem(id) {
+        items = items.filter(i => i.id !== id);
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('mealItemsBody');
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#9e9e9e;">No food items added yet.</td></tr>';
+            document.getElementById('mealTotals').textContent = '0.0 kcal | Protein: 0.0g | Carbs: 0.0g | Fats: 0.0g';
+            return;
+        }
+
+        let totCal = 0, totP = 0, totC = 0, totF = 0;
+        tbody.innerHTML = items.map(it => {
+            totCal += it.cal; totP += it.p; totC += it.c; totF += it.f;
+            return `
+                <tr>
+                    <td><strong>🍱 ${it.name}</strong></td>
+                    <td>${it.qty}</td>
+                    <td><strong>${it.cal.toFixed(1)}</strong></td>
+                    <td>${it.p.toFixed(1)}</td>
+                    <td>${it.c.toFixed(1)}</td>
+                    <td>${it.f.toFixed(1)}</td>
+                    <td><button class="btn btn-danger" onclick="removeItem(${it.id})">Remove</button></td>
+                </tr>
+            `;
+        }).join('');
+
+        document.getElementById('mealTotals').textContent = 
+            `${totCal.toFixed(1)} kcal | Protein: ${totP.toFixed(1)}g | Carbs: ${totC.toFixed(1)}g | Fats: ${totF.toFixed(1)}g`;
+
+        document.getElementById('statusBar').textContent = `✅ Scaled and added item to meal! Active items: ${items.length}`;
+    }
+</script>
+</body>
+</html>

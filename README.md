@@ -99,3 +99,4 @@ java -cp bin nutritrack.Phase0Verification
 | **Member 2** | Meal Management | `Meal`, `MealItem`, `MealDAO`, `MealService`, `MealCreationPanel` |
 | **Member 3** | Nutrition Engine | `Nutrition`, `NutritionService`, `NutritionDashboardPanel` |
 | **Member 4** | DB & Integration | `DBConnection`, `HistoryDAO`, `HistoryService`, `MainFrame`, `MealHistoryPanel` |
+ main

@@ -89,6 +89,18 @@ javac -d bin -sourcepath src $(find src -name "*.java")
 java -cp bin nutritrack.Phase0Verification
 ```
 
+### 4. Run the integrated web application
+
+From the project root in PowerShell, compile the Java sources and start the single web server:
+
+```powershell
+$javaFiles = Get-ChildItem src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+javac -encoding UTF-8 -d bin $javaFiles
+java -cp "bin;lib\mysql-connector-j-26.10.0.jar" nutritrack.NutriTrackServer
+```
+
+Keep that terminal open and visit **http://localhost:8081/**. The Food Catalog, Meal Builder, Nutrition Dashboard, and Meal History use the same server and database. Configure `NUTRITRACK_DB_USER` and `NUTRITRACK_DB_PASSWORD` in the same PowerShell terminal before starting Java if your MySQL login is different from the local defaults. Do not start the separate `Member2MealServer` or `Member3NutritionServer` for this integrated web app.
+
 ---
 
 ## 👥 Team Workload & Ownership

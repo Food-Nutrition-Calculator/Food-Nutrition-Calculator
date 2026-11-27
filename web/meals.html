@@ -3,43 +3,45 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NutriTrack – Member 2 Meal Builder</title>
+    <title>NutriTrack - Meal Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f8f1; color: #212121; min-height: 100vh; }
-        .header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        body { font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; }
+        .header { background: linear-gradient(110deg, #1e40af, #2563eb); color: white; padding: 22px clamp(20px, 4vw, 56px); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.14); }
         .header h1 { font-size: 1.6rem; font-weight: 700; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px; }
+        .container { width: 100%; max-width: 1600px; margin: 0 auto; padding: 24px 20px; }
 
-        .card { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
-        .card h2 { font-size: 1.15rem; color: #1b5e20; margin-bottom: 16px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px 24px; box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05); margin-bottom: 22px; }
+        .card h2 { font-size: 1.15rem; color: #1e3a8a; margin-bottom: 16px; border-bottom: 2px solid #eff6ff; padding-bottom: 6px; }
 
         .form-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
-        .form-row label { font-weight: 700; font-size: 0.9rem; color: #1b5e20; }
-        .form-row input, .form-row select { border: 2px solid #c8e6c9; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
-        .form-row input:focus, .form-row select:focus { border-color: #2e7d32; }
+        .form-row label { font-weight: 700; font-size: 0.9rem; color: #1e3a8a; }
+        .form-row input, .form-row select { border: 2px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
+        .form-row input:focus, .form-row select:focus { border-color: #2563eb; }
 
         .btn { padding: 9px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .btn-primary { background: #2e7d32; color: white; }
-        .btn-primary:hover { background: #1b5e20; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1e3a8a; }
         .btn-danger { background: #c62828; color: white; padding: 4px 10px; font-size: 0.8rem; border-radius: 6px; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 10px; }
-        thead th { background: #e8f5e9; padding: 10px 12px; text-align: left; font-weight: 700; color: #2e7d32; text-transform: uppercase; font-size: 0.82rem; }
+        thead th { background: #eff6ff; padding: 10px 12px; text-align: left; font-weight: 700; color: #2563eb; text-transform: uppercase; font-size: 0.82rem; }
         tbody tr { border-bottom: 1px solid #f0f0f0; }
-        tbody tr:hover { background: #f8fcf8; }
+        tbody tr:hover { background: #f8fafc; }
         tbody td { padding: 10px 12px; }
 
-        .total-bar { display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; padding: 14px 20px; border-radius: 10px; font-weight: 700; margin-top: 15px; color: #1b5e20; font-size: 1.05rem; }
-        .status-bar { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2e7d32; margin-top: 15px; }
+        .total-bar { display: flex; justify-content: space-between; align-items: center; background: #eff6ff; padding: 14px 20px; border-radius: 10px; font-weight: 700; margin-top: 15px; color: #1e3a8a; font-size: 1.05rem; }
+        .status-bar { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2563eb; margin-top: 15px; }
+            @media (max-width: 720px) { .header { padding: 18px; } .container { padding: 18px 12px; } .card { padding: 18px 14px; } .total-bar { align-items: flex-start; gap: 8px; flex-direction: column; } table { font-size: 0.8rem; } tbody td { padding: 8px 5px; } }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div>
-        <h1>🍱 Meal Builder & Planning</h1>
-        <p>Member 2 – Create Daily Meals & Enter Serving Quantities</p>
+        <h1>Meal Builder &amp; Planning</h1>
+        <p>Create meals and track portions using your food catalog.</p>
     </div>
 </div>
 
@@ -60,10 +62,7 @@
         <div class="form-row">
             <label for="foodSelect">Food Item:</label>
             <select id="foodSelect">
-                <option value="1" data-cal="389" data-p="16.9" data-c="66.3" data-f="6.9" data-serving="100">Oatmeal (100g base = 389 kcal)</option>
-                <option value="2" data-cal="78" data-p="6.3" data-c="0.6" data-f="5.3" data-serving="1">Whole Egg (1 unit base = 78 kcal)</option>
-                <option value="3" data-cal="165" data-p="31.0" data-c="0.0" data-f="3.6" data-serving="100">Chicken Breast (100g base = 165 kcal)</option>
-                <option value="4" data-cal="111" data-p="2.6" data-c="23.0" data-f="0.9" data-serving="100">Brown Rice (100g base = 111 kcal)</option>
+                <option value="">Loading foods from catalog...</option>
             </select>
 
             <label for="quantity">Quantity (g/units):</label>
@@ -93,34 +92,62 @@
             <span>Meal Total:</span>
             <span id="mealTotals">0.0 kcal | Protein: 0.0g | Carbs: 0.0g | Fats: 0.0g</span>
         </div>
+        <div class="form-row" style="justify-content:flex-end; margin-top:14px;">
+            <button class="btn btn-primary" onclick="saveMeal()">Save Meal to MySQL</button>
+        </div>
     </div>
 
     <div class="status-bar" id="statusBar">
-        Ready. Member 2 Meal Builder active. Enter quantity to scale nutritional values.
+        Ready. Add foods to build a meal, then save it to your log.
     </div>
 </div>
 
 <script>
+    let catalog = [];
+    function getLocalDateString() {
+        const today = new Date();
+        today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+        return today.toISOString().slice(0, 10);
+    }
+
     window.onload = function () {
-        document.getElementById('mealDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('mealDate').value = getLocalDateString();
+        loadFoods();
     };
+
+    async function loadFoods() {
+        const select = document.getElementById('foodSelect');
+        try {
+            const response = await fetch('/api/foods');
+            if (!response.ok) throw new Error('Could not load food catalog');
+            catalog = await response.json();
+            select.innerHTML = catalog.map(food => `<option value="${food.foodId}" data-serving="${food.defaultServingSize}">${escapeHtml(food.foodName)} (${food.defaultServingSize} ${escapeHtml(food.servingUnit)} base)</option>`).join('');
+        } catch (error) {
+            select.innerHTML = '<option value="">Java API unavailable</option>';
+            document.getElementById('statusBar').textContent = 'Could not load foods. Start NutriTrackServer and reload.';
+        }
+    }
 
     let items = [];
 
     function addFoodItem() {
         const select = document.getElementById('foodSelect');
         const opt = select.options[select.selectedIndex];
-        const foodName = opt.text.split('(')[0].trim();
-        const cal = parseFloat(opt.dataset.cal);
-        const p = parseFloat(opt.dataset.p);
-        const c = parseFloat(opt.dataset.c);
-        const f = parseFloat(opt.dataset.f);
+        const food = catalog.find(f => f.foodId === Number(opt.value));
+        if (!food) return;
+        const foodName = food.foodName;
+        const cal = Number(food.calories);
+        const p = Number(food.protein);
+        const c = Number(food.carbohydrates);
+        const f = Number(food.fats);
         const serving = parseFloat(opt.dataset.serving);
         const qty = parseFloat(document.getElementById('quantity').value) || 100;
 
         const ratio = qty / serving;
         const item = {
             id: Date.now(),
+            foodId: food.foodId,
+            unit: food.servingUnit,
             name: foodName,
             qty: qty,
             cal: cal * ratio,
@@ -131,6 +158,36 @@
 
         items.push(item);
         renderTable();
+    }
+
+    async function saveMeal() {
+        if (!items.length) {
+            document.getElementById('statusBar').textContent = 'Add at least one food item before saving.';
+            return;
+        }
+        const payload = {
+            mealName: document.getElementById('mealName').value.trim(),
+            mealDate: document.getElementById('mealDate').value,
+            items: items.map(item => ({ foodId: item.foodId, quantity: item.qty }))
+        };
+        try {
+            const response = await fetch('/api/meals', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || 'Meal could not be saved.');
+            document.getElementById('statusBar').textContent = `Meal saved to MySQL (ID ${result.mealId}).`;
+            items = [];
+            renderTable();
+            window.parent.postMessage({ type: 'meal-saved' }, window.location.origin);
+        } catch (error) {
+            document.getElementById('statusBar').textContent = error.message;
+        }
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
     }
 
     function removeItem(id) {

@@ -3,6 +3,10 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Use the Java server when this page is opened through Live Server or
+    // directly from disk. When served by NutriTrackServer, keep same-origin.
+    const API_BASE = window.location.port === '8081' ? '' : 'http://localhost:8081';
+
     // State variables for searching and sorting
     let currentSearch = '';
     let currentSort = 'NAME';
@@ -35,10 +39,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    window.addEventListener('message', (event) => {
+        if (event.origin !== window.location.origin || event.data?.type !== 'meal-saved') return;
+        ['tab-dashboard', 'tab-history'].forEach(id => {
+            const frame = document.querySelector(`#${id} iframe`);
+            if (frame) frame.contentWindow.location.reload();
+        });
+    });
+
     // --- Load Food Catalog from Java API ---
     async function loadFoods() {
         try {
-            const url = `/api/foods?search=${encodeURIComponent(currentSearch)}&sortBy=${currentSort}&asc=${isAscending}`;
+            const url = `${API_BASE}/api/foods?search=${encodeURIComponent(currentSearch)}&sortBy=${currentSort}&asc=${isAscending}`;
             const response = await fetch(url);
             
             if (!response.ok) {
@@ -120,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('/api/foods', {
+            const response = await fetch(`${API_BASE}/api/foods`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -149,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(`/api/foods?id=${foodId}`, {
+            const response = await fetch(`${API_BASE}/api/foods?id=${foodId}`, {
                 method: 'DELETE'
             });
 

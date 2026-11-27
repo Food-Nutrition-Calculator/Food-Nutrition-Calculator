@@ -10,7 +10,8 @@ target/
 .project
 .classpath
 .settings/
-.vscode/
+.vscode/*
+!.vscode/launch.json
 
 # Build and OS Logs
 *.log

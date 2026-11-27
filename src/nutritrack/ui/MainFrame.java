@@ -23,8 +23,22 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("Food Catalog", new FoodManagementPanel());
-        tabs.addTab("Meal History", new MealHistoryPanel());
+        FoodManagementPanel foodPanel = new FoodManagementPanel();
+        MealCreationPanel mealPanel = new MealCreationPanel();
+        NutritionDashboardPanel nutritionPanel = new NutritionDashboardPanel();
+        MealHistoryPanel historyPanel = new MealHistoryPanel();
+
+        mealPanel.addPropertyChangeListener("mealSaved", event -> {
+            nutritionPanel.refreshDashboard();
+            historyPanel.refreshHistory();
+        });
+        tabs.addTab("Food Catalog", foodPanel);
+        tabs.addTab("Meal Builder", mealPanel);
+        tabs.addTab("Nutrition Dashboard", nutritionPanel);
+        tabs.addTab("Meal History", historyPanel);
+        tabs.addChangeListener(event -> {
+            if (tabs.getSelectedComponent() == mealPanel) mealPanel.refreshCatalog();
+        });
 
         add(tabs, BorderLayout.CENTER);
     }

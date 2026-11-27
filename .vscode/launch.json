@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run NutriTrack Web App",
+            "request": "launch",
+            "mainClass": "nutritrack.NutriTrackServer"
+        },
+        {
+            "type": "java",
+            "name": "Run NutriTrack Desktop",
+            "request": "launch",
+            "mainClass": "nutritrack.NutriTrackApp"
+        }
+    ]
+}

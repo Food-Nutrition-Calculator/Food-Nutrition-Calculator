@@ -56,7 +56,7 @@ public class HistoryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error in HistoryDAO: " + e.getMessage());
+            throw new IllegalStateException("Unable to load meal history from MySQL: " + e.getMessage(), e);
         }
         return meals;
     }
@@ -85,7 +85,7 @@ public class HistoryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error in HistoryDAO: " + e.getMessage());
+            throw new IllegalStateException("Unable to calculate daily nutrition from MySQL: " + e.getMessage(), e);
         }
         return new Nutrition();
     }

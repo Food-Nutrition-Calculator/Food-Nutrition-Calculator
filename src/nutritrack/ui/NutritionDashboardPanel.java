@@ -2,6 +2,8 @@ package nutritrack.ui;
 
 import nutritrack.model.Nutrition;
 import nutritrack.service.NutritionService;
+import nutritrack.service.HistoryService;
+import nutritrack.model.Meal;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,8 +20,10 @@ import java.util.Map;
 public class NutritionDashboardPanel extends JPanel {
 
     private final NutritionService nutritionService;
+    private final HistoryService historyService = new HistoryService();
     private JTextField dateField;
     private JLabel caloriesValue, proteinValue, carbsValue, fatsValue;
+    private JLabel statusLabel;
     private JLabel proteinPctLabel, carbsPctLabel, fatsPctLabel;
     private JProgressBar proteinBar, carbsBar, fatsBar;
     private DefaultTableModel tableModel;
@@ -27,7 +31,7 @@ public class NutritionDashboardPanel extends JPanel {
     public NutritionDashboardPanel() {
         this.nutritionService = new NutritionService();
         initUI();
-        loadDemoData();
+        loadData();
     }
 
     private void initUI() {
@@ -38,7 +42,7 @@ public class NutritionDashboardPanel extends JPanel {
         // Header
         JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
         header.setBackground(new Color(27, 94, 32));
-        JLabel title = new JLabel("📊  Nutrition Dashboard (Member 3)");
+        JLabel title = new JLabel("📊  Nutrition Dashboard");
         title.setFont(new Font("SansSerif", Font.BOLD, 18));
         title.setForeground(Color.WHITE);
         header.add(title);
@@ -55,8 +59,8 @@ public class NutritionDashboardPanel extends JPanel {
         dateBar.add(new JLabel("Date:"));
         dateField = new JTextField(LocalDate.now().toString(), 10);
         dateBar.add(dateField);
-        JButton loadBtn = new JButton("Calculate Summary");
-        loadBtn.addActionListener(e -> loadDemoData());
+        JButton loadBtn = new JButton("Load Summary");
+        loadBtn.addActionListener(e -> loadData());
         dateBar.add(loadBtn);
         center.add(dateBar);
 
@@ -105,7 +109,8 @@ public class NutritionDashboardPanel extends JPanel {
         center.add(new JScrollPane(table));
 
         add(center, BorderLayout.CENTER);
-        add(new JLabel("Ready. Live Nutrition Calculation Engine Active."), BorderLayout.SOUTH);
+        statusLabel = new JLabel("Ready. Select a date and calculate its saved meals.");
+        add(statusLabel, BorderLayout.SOUTH);
     }
 
     private JPanel createCard(String title, JLabel val, Color col) {
@@ -130,11 +135,22 @@ public class NutritionDashboardPanel extends JPanel {
         return r;
     }
 
-    private void loadDemoData() {
-        Nutrition b = Nutrition.scale(78.0, 6.3, 0.6, 5.3, 1.0, 2.0); // 2 eggs
-        Nutrition l = Nutrition.scale(165.0, 31.0, 0.0, 3.6, 100.0, 200.0); // 200g chicken
-        Nutrition tot = nutritionService.calculateDailyTotal(List.of(b, l));
-        Map<String, Double> pcts = nutritionService.calculateMacronutrientPercentages(tot);
+    public void refreshDashboard() {
+        loadData();
+    }
+
+    private void loadData() {
+        final LocalDate date;
+        try {
+            date = LocalDate.parse(dateField.getText().trim());
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, "Enter a date in YYYY-MM-DD format.", "Invalid Date", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            List<Meal> meals = historyService.getDailyMealHistory(date);
+            Nutrition tot = nutritionService.calculateDailyNutrition(meals);
+            Map<String, Double> pcts = nutritionService.calculateMacronutrientPercentages(tot);
 
         caloriesValue.setText(String.format("%.1f kcal", tot.getTotalCalories()));
         proteinValue.setText(String.format("%.1f g", tot.getTotalProtein()));
@@ -150,14 +166,23 @@ public class NutritionDashboardPanel extends JPanel {
         fatsBar.setValue(pcts.get("FATS_PCT").intValue());
         fatsPctLabel.setText("Fats: " + pcts.get("FATS_PCT") + "%");
 
-        tableModel.setRowCount(0);
-        tableModel.addRow(new Object[]{"Breakfast (2 Boiled Eggs)", b.getTotalCalories(), b.getTotalProtein(), b.getTotalCarbs(), b.getTotalFats()});
-        tableModel.addRow(new Object[]{"Lunch (200g Grilled Chicken)", l.getTotalCalories(), l.getTotalProtein(), l.getTotalCarbs(), l.getTotalFats()});
+            tableModel.setRowCount(0);
+            for (Meal meal : meals) {
+                Nutrition mealNutrition = nutritionService.calculateMealNutrition(meal);
+                tableModel.addRow(new Object[]{meal.getMealName(), mealNutrition.getTotalCalories(), mealNutrition.getTotalProtein(), mealNutrition.getTotalCarbs(), mealNutrition.getTotalFats()});
+            }
+            statusLabel.setText(meals.isEmpty()
+                    ? "No meals saved for " + date + ". Add and save a meal in Meal Builder."
+                    : "Loaded " + meals.size() + " saved meal(s) for " + date + ".");
+        } catch (RuntimeException ex) {
+            tableModel.setRowCount(0);
+            statusLabel.setText("Dashboard could not load MySQL data: " + ex.getMessage());
+        }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame f = new JFrame("NutriTrack – Member 3 Nutrition Dashboard");
+            JFrame f = new JFrame("NutriTrack - Nutrition Dashboard");
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             f.setSize(750, 550);
             f.setLocationRelativeTo(null);

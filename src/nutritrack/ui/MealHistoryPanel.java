@@ -144,6 +144,10 @@ public class MealHistoryPanel extends JPanel {
         }
     }
 
+    public void refreshHistory() {
+        loadHistory();
+    }
+
     private void deleteSelectedMeal() {
         int selectedRow = mealTable.getSelectedRow();
         if (selectedRow < 0) {

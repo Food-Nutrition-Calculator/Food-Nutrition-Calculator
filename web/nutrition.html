@@ -3,40 +3,41 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NutriTrack – Member 3 Nutrition Dashboard</title>
+    <title>NutriTrack - Nutrition Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f8f1; color: #212121; min-height: 100vh; }
-        .header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        body { font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; }
+        .header { background: linear-gradient(110deg, #1e40af, #2563eb); color: white; padding: 22px clamp(20px, 4vw, 56px); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.14); }
         .header h1 { font-size: 1.6rem; font-weight: 700; }
         .header p  { font-size: 0.9rem; opacity: 0.9; }
-        .container { max-width: 1050px; margin: 0 auto; padding: 24px 20px; }
+        .container { width: 100%; max-width: 1600px; margin: 0 auto; padding: 28px clamp(18px, 3vw, 40px); }
 
         .date-bar { background: white; border-radius: 12px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; flex-wrap: wrap; }
-        .date-bar label { font-weight: 700; color: #1b5e20; }
-        .date-bar input[type="date"] { border: 2px solid #c8e6c9; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
+        .date-bar label { font-weight: 700; color: #1e3a8a; }
+        .date-bar input[type="date"] { border: 2px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
         .btn { padding: 9px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .btn-primary { background: #2e7d32; color: white; }
-        .btn-primary:hover { background: #1b5e20; }
-        .btn-secondary { background: #e8f5e9; color: #2e7d32; border: 2px solid #c8e6c9; }
-        .btn-secondary:hover { background: #c8e6c9; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1e3a8a; }
+        .btn-secondary { background: #eff6ff; color: #2563eb; border: 2px solid #bfdbfe; }
+        .btn-secondary:hover { background: #bfdbfe; }
 
         .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
         .kpi-card { background: white; border-radius: 12px; padding: 18px 18px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid; }
-        .kpi-card.calories  { border-color: #2e7d32; }
+        .kpi-card.calories  { border-color: #2563eb; }
         .kpi-card.protein   { border-color: #1565c0; }
         .kpi-card.carbs     { border-color: #e65100; }
         .kpi-card.fats      { border-color: #6a1b9a; }
         .kpi-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #757575; margin-bottom: 6px; }
         .kpi-value { font-size: 1.9rem; font-weight: 800; line-height: 1.1; }
         .kpi-unit { font-size: 0.95rem; font-weight: 400; color: #9e9e9e; margin-left: 2px; }
-        .kpi-card.calories .kpi-value  { color: #2e7d32; }
+        .kpi-card.calories .kpi-value  { color: #2563eb; }
         .kpi-card.protein  .kpi-value  { color: #1565c0; }
         .kpi-card.carbs    .kpi-value  { color: #e65100; }
         .kpi-card.fats     .kpi-value  { color: #6a1b9a; }
 
-        .macro-section { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
-        .macro-section h3 { font-size: 1rem; font-weight: 700; color: #1b5e20; margin-bottom: 16px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+        .macro-section { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px 24px; box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05); margin-bottom: 22px; }
+        .macro-section h3 { font-size: 1rem; font-weight: 700; color: #1e3a8a; margin-bottom: 16px; border-bottom: 2px solid #eff6ff; padding-bottom: 6px; }
         .macro-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
         .macro-name { width: 120px; font-weight: 700; font-size: 0.9rem; }
         .macro-pct { width: 50px; font-size: 0.95rem; font-weight: 700; text-align: right; }
@@ -50,25 +51,27 @@
         .macro-name.carbs   { color: #e65100; }
         .macro-name.fats    { color: #6a1b9a; }
 
-        .meals-section { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
-        .meals-section h3 { font-size: 1rem; font-weight: 700; color: #1b5e20; margin-bottom: 14px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+        .meals-section { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px 24px; box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05); margin-bottom: 22px; }
+        .meals-section h3 { font-size: 1rem; font-weight: 700; color: #1e3a8a; margin-bottom: 14px; border-bottom: 2px solid #eff6ff; padding-bottom: 6px; }
         table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-        thead th { background: #e8f5e9; padding: 10px 12px; text-align: left; font-weight: 700; color: #2e7d32; text-transform: uppercase; font-size: 0.82rem; }
+        thead th { background: #eff6ff; padding: 10px 12px; text-align: left; font-weight: 700; color: #2563eb; text-transform: uppercase; font-size: 0.82rem; }
         tbody tr { border-bottom: 1px solid #f0f0f0; }
-        tbody tr:hover { background: #f8fcf8; }
+        tbody tr:hover { background: #f8fafc; }
         tbody td { padding: 10px 12px; }
-        .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; border-radius: 12px; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; border: 1px solid #c8e6c9; }
-        .status-bar { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2e7d32; }
+        .badge { display: inline-block; background: #eff6ff; color: #2563eb; border-radius: 12px; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; border: 1px solid #bfdbfe; }
+        .status-bar { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2563eb; }
+            @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .header { gap: 12px; flex-wrap: wrap; } }
+        @media (max-width: 560px) { .container { padding: 18px 12px; } .kpi-row { gap: 10px; } .macro-row { gap: 6px; } .macro-name { width: 74px; } .macro-pct { width: 42px; } .macro-g { display: none; } .macro-section, .meals-section { padding: 16px 12px; } table { font-size: 0.8rem; } thead th, tbody td { padding: 8px 6px; } }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div>
-        <h1>📊 Nutrition Dashboard</h1>
-        <p>Macronutrient Distribution & Daily Intake — Member 3</p>
+        <h1>Nutrition Dashboard</h1>
+        <p>Daily nutrient totals and macronutrient breakdown.</p>
     </div>
-    <span class="badge" style="background:white; color:#1b5e20; font-size:0.85rem;">Port: 8080 Active</span>
+    <span class="badge" style="background:white; color:#1e3a8a; font-size:0.85rem;">Daily Nutrition Summary</span>
 </div>
 
 <div class="container">
@@ -140,21 +143,27 @@
     </div>
 
     <div class="status-bar" id="statusBar">
-        Ready. Connected to Member 3 Nutrition Calculation Server.
+        Loading saved meals for the selected date...
     </div>
 </div>
 
 <script>
-    const API_BASE = 'http://localhost:8080';
+    const API_BASE = '';
+
+    function getLocalDateString() {
+        const today = new Date();
+        today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+        return today.toISOString().slice(0, 10);
+    }
 
     window.onload = function () {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
         document.getElementById('dateInput').value = today;
         loadNutrition();
     };
 
     function loadToday() {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getLocalDateString();
         document.getElementById('dateInput').value = today;
         loadNutrition();
     }
@@ -206,8 +215,8 @@
 
         const bar = document.getElementById('statusBar');
         bar.textContent = `✅ Calculated Daily Nutrition for ${data.date} (Total: ${data.totalCalories.toFixed(1)} kcal)`;
-        bar.style.background = '#e8f5e9';
-        bar.style.color = '#2e7d32';
+        bar.style.background = '#eff6ff';
+        bar.style.color = '#2563eb';
     }
 
     function setBar(id, pct, grams) {

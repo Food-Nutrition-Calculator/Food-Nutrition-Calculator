@@ -6,6 +6,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import nutritrack.database.FoodDAO;
+import nutritrack.database.MealDAO;
+import nutritrack.model.FoodItem;
+import nutritrack.model.Meal;
+import nutritrack.service.MealService;
 
 /**
  * Swing GUI Panel for Member 2 – Meal Management & Meal Builder.
@@ -22,10 +28,15 @@ public class MealCreationPanel extends JPanel {
     private DefaultTableModel tableModel;
     private JLabel totalCaloriesLabel;
     private JLabel totalMacrosLabel;
+    private JTextField mealDateField;
+    private JLabel statusLabel;
 
     // In-memory food catalog for immediate demo & standalone run
     private final List<CatalogFood> foodCatalog = new ArrayList<>();
     private final List<ActiveMealItem> currentMealItems = new ArrayList<>();
+    private final FoodDAO foodDAO = new FoodDAO();
+    private final MealDAO mealDAO = new MealDAO();
+    private final MealService mealService = new MealService();
 
     public MealCreationPanel() {
         initCatalog();
@@ -33,12 +44,9 @@ public class MealCreationPanel extends JPanel {
     }
 
     private void initCatalog() {
-        foodCatalog.add(new CatalogFood(1, "Rolled Oats", "grams", 100.0, 389.0, 16.9, 66.3, 6.9));
-        foodCatalog.add(new CatalogFood(2, "Whole Milk", "ml", 100.0, 61.0, 3.2, 4.8, 3.3));
-        foodCatalog.add(new CatalogFood(3, "Banana", "grams", 100.0, 89.0, 1.1, 22.8, 0.3));
-        foodCatalog.add(new CatalogFood(4, "Boiled Egg", "unit", 1.0, 78.0, 6.3, 0.6, 5.3));
-        foodCatalog.add(new CatalogFood(5, "Grilled Chicken", "grams", 100.0, 165.0, 31.0, 0.0, 3.6));
-        foodCatalog.add(new CatalogFood(6, "White Rice", "grams", 100.0, 130.0, 2.7, 28.2, 0.3));
+        for (FoodItem food : foodDAO.findAll()) {
+            foodCatalog.add(new CatalogFood(food));
+        }
     }
 
     private void initUI() {
@@ -53,7 +61,6 @@ public class MealCreationPanel extends JPanel {
         title.setFont(new Font("SansSerif", Font.BOLD, 18));
         title.setForeground(Color.WHITE);
         header.add(title);
-        add(header, BorderLayout.NORTH);
 
         // 2. Control Bar (Meal Name, Food Dropdown, Quantity Input)
         JPanel controlPanel = new JPanel();
@@ -70,6 +77,9 @@ public class MealCreationPanel extends JPanel {
         row1.add(new JLabel("Meal Name:"));
         mealNameField = new JTextField("Breakfast", 12);
         row1.add(mealNameField);
+        row1.add(new JLabel("Date (YYYY-MM-DD):"));
+        mealDateField = new JTextField(LocalDate.now().toString(), 10);
+        row1.add(mealDateField);
 
         // Row 2: Food Select & Serving Quantity
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
@@ -97,9 +107,18 @@ public class MealCreationPanel extends JPanel {
         clearBtn.addActionListener(e -> clearMeal());
         row2.add(clearBtn);
 
+        JButton saveBtn = new JButton("Save Meal to MySQL");
+        saveBtn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        saveBtn.addActionListener(e -> saveMeal());
+        row2.add(saveBtn);
+
         controlPanel.add(row1);
         controlPanel.add(row2);
-        add(controlPanel, BorderLayout.NORTH);
+        JPanel topPanel = new JPanel(new BorderLayout(0, 8));
+        topPanel.setOpaque(false);
+        topPanel.add(header, BorderLayout.NORTH);
+        topPanel.add(controlPanel, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
 
         // 3. Center Table (Active Meal Items)
         String[] columns = {"Food Name", "Portion Qty", "Scaled Calories (kcal)", "Protein (g)", "Carbs (g)", "Fats (g)"};
@@ -127,7 +146,43 @@ public class MealCreationPanel extends JPanel {
 
         footer.add(totalCaloriesLabel, BorderLayout.WEST);
         footer.add(totalMacrosLabel, BorderLayout.EAST);
+        statusLabel = new JLabel(foodCatalog.isEmpty()
+                ? "No catalog foods loaded. Check MySQL and refresh the Food Catalog."
+                : "Ready. Meal data will be saved to MySQL.");
+        footer.add(statusLabel, BorderLayout.SOUTH);
         add(footer, BorderLayout.SOUTH);
+    }
+
+    public void refreshCatalog() {
+        foodCatalog.clear();
+        for (FoodItem food : foodDAO.findAll()) foodCatalog.add(new CatalogFood(food));
+        foodDropdown.removeAllItems();
+        for (CatalogFood food : foodCatalog) {
+            foodDropdown.addItem(food.name + " (" + food.defaultServing + " " + food.unit + " = " + food.calories + " kcal)");
+        }
+        statusLabel.setText(foodCatalog.isEmpty() ? "No foods available. Check the database." : "Food catalog refreshed.");
+    }
+
+    private void saveMeal() {
+        if (currentMealItems.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Add at least one food item before saving.", "Empty Meal", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            Meal meal = mealService.createNewMeal(mealNameField.getText());
+            meal.setMealDate(LocalDate.parse(mealDateField.getText().trim()));
+            for (ActiveMealItem active : currentMealItems) {
+                mealService.addFoodToMeal(meal, active.food.source, active.quantity);
+            }
+            if (!mealDAO.saveCompleteMeal(meal)) {
+                throw new IllegalStateException("Meal could not be saved. Check MySQL and the database schema.");
+            }
+            clearMeal();
+            statusLabel.setText("Meal saved successfully (ID " + meal.getMealId() + ").");
+            firePropertyChange("mealSaved", false, true);
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Save Meal Failed", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void addItemToMeal() {
@@ -203,6 +258,13 @@ public class MealCreationPanel extends JPanel {
         int id;
         String name, unit;
         double defaultServing, calories, protein, carbs, fats;
+        FoodItem source;
+
+        CatalogFood(FoodItem food) {
+            this(food.getFoodId(), food.getFoodName(), food.getServingUnit(), food.getDefaultServingSize(),
+                    food.getCalories(), food.getProtein(), food.getCarbohydrates(), food.getFats());
+            this.source = food;
+        }
 
         CatalogFood(int id, String name, String unit, double defaultServing, double calories, double protein, double carbs, double fats) {
             this.id = id;

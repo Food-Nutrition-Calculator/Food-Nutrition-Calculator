@@ -1,38 +1,40 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NutriTrack – Meal History & Database Logs</title>
+    <title>NutriTrack - Meal History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f8f1; color: #212121; min-height: 100vh; }
-        .header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        body { font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; }
+        .header { background: linear-gradient(110deg, #1e40af, #2563eb); color: white; padding: 22px clamp(20px, 4vw, 56px); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(15, 23, 42, 0.14); }
         .header h1 { font-size: 1.6rem; font-weight: 700; }
-        .container { max-width: 1050px; margin: 0 auto; padding: 24px 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
-        .card h2 { font-size: 1.15rem; color: #1b5e20; margin-bottom: 16px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+        .container { width: 100%; max-width: 1600px; margin: 0 auto; padding: 28px clamp(18px, 3vw, 40px); }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px 24px; box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05); margin-bottom: 22px; }
+        .card h2 { font-size: 1.15rem; color: #1e3a8a; margin-bottom: 16px; border-bottom: 2px solid #eff6ff; padding-bottom: 6px; }
         .filter-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
-        .filter-bar label { font-weight: 700; color: #1b5e20; }
-        .filter-bar input[type="date"] { border: 2px solid #c8e6c9; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
+        .filter-bar label { font-weight: 700; color: #1e3a8a; }
+        .filter-bar input[type="date"] { border: 2px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
         .btn { padding: 9px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-        .btn-primary { background: #2e7d32; color: white; }
-        .btn-primary:hover { background: #1b5e20; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1e3a8a; }
         .btn-danger { background: #c62828; color: white; padding: 5px 12px; font-size: 0.82rem; border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-        thead th { background: #e8f5e9; padding: 10px 12px; text-align: left; font-weight: 700; color: #2e7d32; text-transform: uppercase; font-size: 0.82rem; }
+        thead th { background: #eff6ff; padding: 10px 12px; text-align: left; font-weight: 700; color: #2563eb; text-transform: uppercase; font-size: 0.82rem; }
         tbody tr { border-bottom: 1px solid #f0f0f0; }
-        tbody tr:hover { background: #f8fcf8; }
+        tbody tr:hover { background: #f8fafc; }
         tbody td { padding: 10px 12px; }
-        .status-bar { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2e7d32; }
+        .status-bar { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2563eb; }
+            @media (max-width: 700px) { .header { padding: 18px; } .container { padding: 18px 12px; } .card { padding: 16px 12px; overflow-x: auto; } table { min-width: 760px; } }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div>
-        <h1>📜 Meal History & Database Logs</h1>
-        <p>Member 4 – MySQL Historical Records, Aggregations & Audit Logs</p>
+        <h1>Meal History</h1>
+        <p>Review and manage meals saved to your nutrition log.</p>
     </div>
 </div>
 
@@ -43,7 +45,7 @@
             <label for="historyDate">Select Date:</label>
             <input type="date" id="historyDate" />
             <button class="btn btn-primary" onclick="loadHistory()">Filter Meals</button>
-            <button class="btn btn-primary" style="background:#1565c0;" onclick="loadAll()">Show All Dates</button>
+            <button class="btn btn-primary" style="background:#2563eb;" onclick="loadToday()">Today</button>
         </div>
 
         <table>
@@ -71,25 +73,33 @@
 </div>
 
 <script>
+    function getLocalDateString() {
+        const today = new Date();
+        today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+        return today.toISOString().slice(0, 10);
+    }
+
     window.onload = function () {
-        document.getElementById('historyDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('historyDate').value = getLocalDateString();
         loadHistory();
     };
 
-    let sampleLogs = [
-        { id: 1, date: new Date().toISOString().split('T')[0], time: '08:30:00', name: 'Breakfast (Oats + Milk)', cal: 450.0, p: 20.1, c: 71.1, f: 10.2 },
-        { id: 2, date: new Date().toISOString().split('T')[0], time: '13:15:00', name: 'Lunch (Grilled Chicken + Rice)', cal: 425.0, p: 36.4, c: 56.4, f: 4.2 }
-    ];
-
-    function loadHistory() {
+    async function loadHistory() {
         const d = document.getElementById('historyDate').value;
-        const filtered = d ? sampleLogs.filter(x => x.date === d) : sampleLogs;
-        render(filtered);
+        try {
+            const response = await fetch(`/api/history?date=${encodeURIComponent(d)}`);
+            if (!response.ok) throw new Error('Could not load saved meals.');
+            const data = await response.json();
+            render(data.meals || []);
+            document.getElementById('statusBar').textContent = `Loaded ${data.meals.length} saved meal(s) for ${data.date}.`;
+        } catch (error) {
+            document.getElementById('historyBody').innerHTML = `<tr><td colspan="8" style="text-align:center; padding:25px; color:#c62828;">${error.message} Start NutriTrackServer and check MySQL.</td></tr>`;
+        }
     }
 
-    function loadAll() {
-        document.getElementById('historyDate').value = '';
-        render(sampleLogs);
+    function loadToday() {
+        document.getElementById('historyDate').value = getLocalDateString();
+        loadHistory();
     }
 
     function render(data) {
@@ -103,8 +113,8 @@
             <tr>
                 <td><strong>#${m.id}</strong></td>
                 <td>${m.date} <small style="color:#757575;">${m.time}</small></td>
-                <td><strong style="color:#1b5e20;">🍱 ${m.name}</strong></td>
-                <td><strong style="color:#2e7d32;">${m.cal.toFixed(1)} kcal</strong></td>
+                <td><strong style="color:#1e3a8a;">🍱 ${m.name}</strong></td>
+                <td><strong style="color:#2563eb;">${m.cal.toFixed(1)} kcal</strong></td>
                 <td>${m.p.toFixed(1)} g</td>
                 <td>${m.c.toFixed(1)} g</td>
                 <td>${m.f.toFixed(1)} g</td>
@@ -112,13 +122,18 @@
             </tr>
         `).join('');
 
-        document.getElementById('statusBar').textContent = `✅ Successfully loaded ${data.length} meal record(s) from MySQL.`;
     }
 
-    function deleteMeal(id) {
+    async function deleteMeal(id) {
         if (!confirm(`Delete Meal #${id} from MySQL?`)) return;
-        sampleLogs = sampleLogs.filter(x => x.id !== id);
-        loadHistory();
+        try {
+            const response = await fetch(`/api/history?id=${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Could not delete meal.');
+            loadHistory();
+            window.parent.postMessage({ type: 'meal-saved' }, window.location.origin);
+        } catch (error) {
+            document.getElementById('statusBar').textContent = error.message;
+        }
     }
 </script>
 </body>

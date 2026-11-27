@@ -4,12 +4,16 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import nutritrack.web.FoodHandler;
+import nutritrack.web.MealHandler;
+import nutritrack.web.HistoryHandler;
+import nutritrack.web.NutritionHandler;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.BindException;
 import java.nio.file.Files;
 import java.util.concurrent.Executors;
 
@@ -22,14 +26,26 @@ import java.util.concurrent.Executors;
  */
 public class NutriTrackServer {
 
-    private static final int PORT = 8080;
+    private static final int PORT = 8081;
     private static final String WEB_ROOT = "web";
 
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        // Keep this stable: the UI calls its API on the same origin, and the
+        // startup instructions advertise this port to the browser.
+        HttpServer server;
+        try {
+            server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        } catch (BindException e) {
+            System.out.println("NutriTrackServer is already running or port " + PORT + " is occupied.");
+            System.out.println("Use the existing server at http://localhost:" + PORT + "/, or stop it before restarting.");
+            return;
+        }
 
         // Mount API Endpoints
         server.createContext("/api/foods", new FoodHandler());
+        server.createContext("/api/meals", new MealHandler());
+        server.createContext("/api/history", new HistoryHandler());
+        server.createContext("/api/nutrition", new NutritionHandler());
 
         // Mount Static File Handler for HTML, CSS, JavaScript
         server.createContext("/", new StaticFileHandler());
@@ -37,10 +53,11 @@ public class NutriTrackServer {
         // Use multi-threaded executor for handling concurrent browser requests
         server.setExecutor(Executors.newFixedThreadPool(10));
         server.start();
+        System.out.println("Server started at: http://localhost:" + server.getAddress().getPort());
 
         System.out.println("====================================================================");
         System.out.println("  NUTRITRACK WEB APPLICATION IS RUNNING!                            ");
-        System.out.println("  Open your browser and visit: http://localhost:" + PORT + "             ");
+        System.out.println("  Open your browser and visit: http://localhost:" + PORT + "/             ");
         System.out.println("====================================================================");
     }
 

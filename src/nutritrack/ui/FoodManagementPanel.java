@@ -1,40 +1,18 @@
 package nutritrack.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.util.List;
+import nutritrack.model.FoodItem;
+import nutritrack.service.FoodService;
+import nutritrack.utils.UIConstants;
+import nutritrack.utils.ValidationUtils;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
-import nutritrack.model.FoodItem;
-import nutritrack.service.FoodService;
-import nutritrack.utils.UIConstants;
-import nutritrack.utils.ValidationUtils;
+import java.awt.*;
+import java.util.List;
 
 /**
  * Swing Graphical User Interface for Food Management.
@@ -181,30 +159,28 @@ public class FoodManagementPanel extends JPanel {
         buttonsPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
 
         btnAdd = new JButton("Add Food");
-        btnAdd.setBackground(UIConstants.ACCENT_COLOR);
-        btnAdd.setForeground(Color.WHITE);
         btnAdd.setFont(UIConstants.FONT_BOLD);
+        btnAdd.setForeground(new Color(25, 111, 61)); // Crisp Dark Green text
         btnAdd.setFocusPainted(false);
         btnAdd.addActionListener(e -> onAddFood());
 
         btnUpdate = new JButton("Update Food");
-        btnUpdate.setBackground(UIConstants.PRIMARY_COLOR);
-        btnUpdate.setForeground(Color.WHITE);
         btnUpdate.setFont(UIConstants.FONT_BOLD);
+        btnUpdate.setForeground(new Color(31, 97, 141)); // Crisp Dark Blue text
         btnUpdate.setFocusPainted(false);
         btnUpdate.setEnabled(false);
         btnUpdate.addActionListener(e -> onUpdateFood());
 
         btnDelete = new JButton("Delete Food");
-        btnDelete.setBackground(UIConstants.DANGER_COLOR);
-        btnDelete.setForeground(Color.WHITE);
         btnDelete.setFont(UIConstants.FONT_BOLD);
+        btnDelete.setForeground(new Color(176, 58, 46)); // Crisp Dark Red text
         btnDelete.setFocusPainted(false);
         btnDelete.setEnabled(false);
         btnDelete.addActionListener(e -> onDeleteFood());
 
         btnClear = new JButton("Clear Form");
-        btnClear.setFont(UIConstants.FONT_BODY);
+        btnClear.setFont(UIConstants.FONT_BOLD);
+        btnClear.setForeground(new Color(50, 50, 50));
         btnClear.setFocusPainted(false);
         btnClear.addActionListener(e -> clearFormFields());
 

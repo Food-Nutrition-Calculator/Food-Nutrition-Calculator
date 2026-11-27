@@ -1,4 +1,4 @@
-﻿package nutritrack.service;
+package nutritrack.service;
 
 import nutritrack.database.HistoryDAO;
 import nutritrack.model.Meal;

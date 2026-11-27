@@ -63,7 +63,17 @@ Default connection parameters in `DBConnection.java`:
 - Host: `localhost:3306`
 - Database: `nutritrack_db`
 - Default User: `root`
-- Default Password: `password` (adjust via `DBConnection.setCredentials("root", "your_password")` or environment variables `DB_USER` and `DB_PASSWORD`)
+- Password: set `NUTRITRACK_DB_PASSWORD` to the password for your MySQL account. The app does not assume a default password.
+- Optional overrides: `NUTRITRACK_DB_USER` and `NUTRITRACK_DB_URL`
+
+For PowerShell, set these in the terminal before launching the app:
+
+```powershell
+$env:NUTRITRACK_DB_USER = "root"
+$env:NUTRITRACK_DB_PASSWORD = "your_mysql_password"
+```
+
+If you start the app from an IDE, add the same names and values to its Run/Debug environment variables. You can also pass them as Java system properties with `-DNUTRITRACK_DB_USER=...` and `-DNUTRITRACK_DB_PASSWORD=...`.
 
 ### 2. Required External Library
 Download and include the **MySQL Connector/J** driver jar (version `8.0.x` or `9.x`):

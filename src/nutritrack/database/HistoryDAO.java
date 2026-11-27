@@ -1,4 +1,4 @@
-﻿package nutritrack.database;
+package nutritrack.database;
 
 import nutritrack.model.FoodItem;
 import nutritrack.model.Meal;

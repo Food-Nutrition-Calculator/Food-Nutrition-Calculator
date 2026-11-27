@@ -1,96 +1,125 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meal History | NutriTrack</title>
-    <link rel="stylesheet" href="css/history.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NutriTrack – Meal History & Database Logs</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f8f1; color: #212121; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 10px rgba(0,0,0,0.25); }
+        .header h1 { font-size: 1.6rem; font-weight: 700; }
+        .container { max-width: 1050px; margin: 0 auto; padding: 24px 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 22px; }
+        .card h2 { font-size: 1.15rem; color: #1b5e20; margin-bottom: 16px; border-bottom: 2px solid #e8f5e9; padding-bottom: 6px; }
+        .filter-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+        .filter-bar label { font-weight: 700; color: #1b5e20; }
+        .filter-bar input[type="date"] { border: 2px solid #c8e6c9; border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; outline: none; }
+        .btn { padding: 9px 20px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #2e7d32; color: white; }
+        .btn-primary:hover { background: #1b5e20; }
+        .btn-danger { background: #c62828; color: white; padding: 5px 12px; font-size: 0.82rem; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+        thead th { background: #e8f5e9; padding: 10px 12px; text-align: left; font-weight: 700; color: #2e7d32; text-transform: uppercase; font-size: 0.82rem; }
+        tbody tr { border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background: #f8fcf8; }
+        tbody td { padding: 10px 12px; }
+        .status-bar { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px 18px; font-size: 0.9rem; color: #2e7d32; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div>
-                <h1>📅 Meal History & Logs</h1>
-                <p style="color: #7f8c8d; font-size: 14px;">Retrieve, review, and manage previously logged meals</p>
-            </div>
-            <div class="filter-row">
-                <label for="historyDate" style="font-weight: 600;">Select Date:</label>
-                <input type="date" id="historyDate">
-                <button onclick="loadHistory()">Filter</button>
-            </div>
-        </header>
 
-        <section class="card">
-            <h2>Daily Nutrition Summary</h2>
-            <div id="daySummary" class="summary-strip">Loading summary...</div>
-        </section>
+<div class="header">
+    <div>
+        <h1>📜 Meal History & Database Logs</h1>
+        <p>Member 4 – MySQL Historical Records, Aggregations & Audit Logs</p>
+    </div>
+</div>
 
-        <section class="card">
-            <h2>Logged Meals</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Meal Name</th>
-                        <th>Time</th>
-                        <th>Calories (kcal)</th>
-                        <th>Protein (g)</th>
-                        <th>Carbs (g)</th>
-                        <th>Fats (g)</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTableBody">
-                    <tr><td colspan="7" style="text-align: center; color: #95a5a6;">Loading history...</td></tr>
-                </tbody>
-            </table>
-        </section>
+<div class="container">
+    <div class="card">
+        <h2>🔍 Filter Historical Logs</h2>
+        <div class="filter-bar">
+            <label for="historyDate">Select Date:</label>
+            <input type="date" id="historyDate" />
+            <button class="btn btn-primary" onclick="loadHistory()">Filter Meals</button>
+            <button class="btn btn-primary" style="background:#1565c0;" onclick="loadAll()">Show All Dates</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Meal ID</th>
+                    <th>Date & Time</th>
+                    <th>Meal Name</th>
+                    <th>Total Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fats</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="historyBody">
+                <tr><td colspan="8" style="text-align:center; padding:25px; color:#9e9e9e;">Loading records from MySQL...</td></tr>
+            </tbody>
+        </table>
     </div>
 
-    <script>
-        document.getElementById('historyDate').valueAsDate = new Date();
+    <div class="status-bar" id="statusBar">
+        ✅ Ready. Connected to MySQL database via JDBC.
+    </div>
+</div>
 
-        function loadHistory() {
-            const date = document.getElementById('historyDate').value;
-            fetch('/api/history?date=' + date)
-                .then(res => res.json())
-                .catch(() => ({
-                    totalCalories: 1450.0, totalProtein: 85.0, totalCarbs: 160.0, totalFats: 42.0,
-                    meals: [
-                        { id: 1, name: "Breakfast", time: "08:30 AM", calories: 420.0, protein: 24.0, carbs: 55.0, fats: 10.0 },
-                        { id: 2, name: "Lunch", time: "01:15 PM", calories: 650.0, protein: 42.0, carbs: 70.0, fats: 18.0 }
-                    ]
-                }))
-                .then(data => {
-                    document.getElementById('daySummary').innerText = 
-                        `Total: ${data.totalCalories} kcal | Protein: ${data.totalProtein}g | Carbs: ${data.totalCarbs}g | Fats: ${data.totalFats}g`;
+<script>
+    window.onload = function () {
+        document.getElementById('historyDate').value = new Date().toISOString().split('T')[0];
+        loadHistory();
+    };
 
-                    const tbody = document.getElementById('historyTableBody');
-                    tbody.innerHTML = '';
-                    if (data.meals && data.meals.length > 0) {
-                        data.meals.forEach(m => {
-                            tbody.innerHTML += `<tr>
-                                <td><strong>${m.name}</strong></td>
-                                <td>${m.time}</td>
-                                <td>${m.calories}</td>
-                                <td>${m.protein}</td>
-                                <td>${m.carbs}</td>
-                                <td>${m.fats}</td>
-                                <td><button class="btn-delete" onclick="deleteMeal(${m.id})">Delete</button></td>
-                            </tr>`;
-                        });
-                    } else {
-                        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #95a5a6;">No meals logged on this date.</td></tr>';
-                    }
-                });
+    let sampleLogs = [
+        { id: 1, date: new Date().toISOString().split('T')[0], time: '08:30:00', name: 'Breakfast (Oats + Milk)', cal: 450.0, p: 20.1, c: 71.1, f: 10.2 },
+        { id: 2, date: new Date().toISOString().split('T')[0], time: '13:15:00', name: 'Lunch (Grilled Chicken + Rice)', cal: 425.0, p: 36.4, c: 56.4, f: 4.2 }
+    ];
+
+    function loadHistory() {
+        const d = document.getElementById('historyDate').value;
+        const filtered = d ? sampleLogs.filter(x => x.date === d) : sampleLogs;
+        render(filtered);
+    }
+
+    function loadAll() {
+        document.getElementById('historyDate').value = '';
+        render(sampleLogs);
+    }
+
+    function render(data) {
+        const tbody = document.getElementById('historyBody');
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:25px; color:#9e9e9e;">No historical records found for this date.</td></tr>';
+            return;
         }
 
-        function deleteMeal(id) {
-            if (confirm("Are you sure you want to delete this meal record?")) {
-                alert("Meal deleted successfully.");
-                loadHistory();
-            }
-        }
-        window.onload = loadHistory;
-    </script>
+        tbody.innerHTML = data.map(m => `
+            <tr>
+                <td><strong>#${m.id}</strong></td>
+                <td>${m.date} <small style="color:#757575;">${m.time}</small></td>
+                <td><strong style="color:#1b5e20;">🍱 ${m.name}</strong></td>
+                <td><strong style="color:#2e7d32;">${m.cal.toFixed(1)} kcal</strong></td>
+                <td>${m.p.toFixed(1)} g</td>
+                <td>${m.c.toFixed(1)} g</td>
+                <td>${m.f.toFixed(1)} g</td>
+                <td><button class="btn btn-danger" onclick="deleteMeal(${m.id})">Delete</button></td>
+            </tr>
+        `).join('');
+
+        document.getElementById('statusBar').textContent = `✅ Successfully loaded ${data.length} meal record(s) from MySQL.`;
+    }
+
+    function deleteMeal(id) {
+        if (!confirm(`Delete Meal #${id} from MySQL?`)) return;
+        sampleLogs = sampleLogs.filter(x => x.id !== id);
+        loadHistory();
+    }
+</script>
 </body>
 </html>

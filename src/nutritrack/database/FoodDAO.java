@@ -1,5 +1,7 @@
 package nutritrack.database;
 
+import nutritrack.model.FoodItem;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,8 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import nutritrack.model.FoodItem;
 
 /**
  * Data Access Object (DAO) for food_items table.

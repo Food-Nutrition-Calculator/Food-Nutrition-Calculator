@@ -1,5 +1,6 @@
 package nutritrack;
 
+import java.io.IOException;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import nutritrack.ui.MainFrame;
@@ -8,6 +9,12 @@ import nutritrack.utils.UIConstants;
 public class NutriTrackApp {
 
     public static void main(String[] args) {
+        try {
+            NutriTrackServer.main(args);
+        } catch (IOException e) {
+            System.err.println("Could not start the NutriTrack web server: " + e.getMessage());
+        }
+
         SwingUtilities.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(

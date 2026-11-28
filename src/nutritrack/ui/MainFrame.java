@@ -23,6 +23,8 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
 
         JTabbedPane tabs = new JTabbedPane();
+        tabs.setFont(UIConstants.FONT_BODY);
+        tabs.setBackground(UIConstants.BACKGROUND_COLOR);
         FoodManagementPanel foodPanel = new FoodManagementPanel();
         MealCreationPanel mealPanel = new MealCreationPanel();
         NutritionDashboardPanel nutritionPanel = new NutritionDashboardPanel();

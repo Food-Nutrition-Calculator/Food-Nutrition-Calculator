@@ -77,7 +77,10 @@ public class MealHistoryPanel extends JPanel {
 
         mealTable = new JTable(tableModel);
         mealTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        mealTable.setRowHeight(24);
+        mealTable.setRowHeight(32);
+        mealTable.setFont(UIConstants.FONT_BODY);
+        mealTable.getTableHeader().setFont(UIConstants.FONT_BOLD);
+        mealTable.getTableHeader().setBackground(UIConstants.BACKGROUND_COLOR);
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
         footer.setOpaque(false);

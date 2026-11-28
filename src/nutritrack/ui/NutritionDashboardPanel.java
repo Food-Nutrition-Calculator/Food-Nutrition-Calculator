@@ -13,6 +13,7 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import nutritrack.utils.UIConstants;
 
 /**
  * Swing GUI Panel for Member 3 (Nutrition Dashboard).
@@ -36,14 +37,14 @@ public class NutritionDashboardPanel extends JPanel {
 
     private void initUI() {
         setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(245, 250, 245));
+        setBackground(UIConstants.BACKGROUND_COLOR);
         setBorder(new EmptyBorder(12, 12, 12, 12));
 
         // Header
         JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
-        header.setBackground(new Color(27, 94, 32));
+        header.setBackground(UIConstants.PRIMARY_COLOR);
         JLabel title = new JLabel("📊  Nutrition Dashboard");
-        title.setFont(new Font("SansSerif", Font.BOLD, 18));
+        title.setFont(UIConstants.FONT_TITLE);
         title.setForeground(Color.WHITE);
         header.add(title);
         add(header, BorderLayout.NORTH);
@@ -51,11 +52,12 @@ public class NutritionDashboardPanel extends JPanel {
         // Center Panel
         JPanel center = new JPanel();
         center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-        center.setBackground(new Color(245, 250, 245));
+        center.setBackground(UIConstants.BACKGROUND_COLOR);
 
         // Date Bar
         JPanel dateBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        dateBar.setBackground(new Color(245, 250, 245));
+        dateBar.setBackground(UIConstants.BACKGROUND_COLOR);
+        dateBar.setFont(UIConstants.FONT_BODY);
         dateBar.add(new JLabel("Date:"));
         dateField = new JTextField(LocalDate.now().toString(), 10);
         dateBar.add(dateField);
@@ -66,35 +68,37 @@ public class NutritionDashboardPanel extends JPanel {
 
         // 4 KPI Cards
         JPanel kpiRow = new JPanel(new GridLayout(1, 4, 10, 0));
-        kpiRow.setBackground(new Color(245, 250, 245));
+        kpiRow.setBackground(UIConstants.BACKGROUND_COLOR);
         caloriesValue = new JLabel("0.0 kcal");
         proteinValue  = new JLabel("0.0 g");
         carbsValue    = new JLabel("0.0 g");
         fatsValue     = new JLabel("0.0 g");
 
-        kpiRow.add(createCard("🔥 Total Calories", caloriesValue, new Color(27, 94, 32)));
-        kpiRow.add(createCard("💪 Protein", proteinValue, new Color(21, 101, 192)));
-        kpiRow.add(createCard("🌾 Carbohydrates", carbsValue, new Color(230, 81, 0)));
-        kpiRow.add(createCard("🥑 Fats", fatsValue, new Color(106, 27, 154)));
+        kpiRow.add(createCard("Total Calories", caloriesValue));
+        kpiRow.add(createCard("Protein", proteinValue));
+        kpiRow.add(createCard("Carbohydrates", carbsValue));
+        kpiRow.add(createCard("Fats", fatsValue));
         center.add(kpiRow);
         center.add(Box.createVerticalStrut(10));
 
         // Macro % Distribution Bars
         JPanel macroBox = new JPanel(new GridLayout(3, 1, 5, 5));
         macroBox.setBackground(Color.WHITE);
-        macroBox.setBorder(BorderFactory.createTitledBorder("Macronutrient Distribution (4-4-9 Standard)"));
+        macroBox.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UIConstants.BORDER_COLOR),
+                BorderFactory.createTitledBorder("Macronutrient Distribution (4-4-9 Standard)")));
 
         proteinPctLabel = new JLabel("Protein: 0%");
         proteinBar = new JProgressBar(0, 100);
-        proteinBar.setForeground(new Color(21, 101, 192));
+        proteinBar.setForeground(UIConstants.PRIMARY_COLOR);
 
         carbsPctLabel = new JLabel("Carbs: 0%");
         carbsBar = new JProgressBar(0, 100);
-        carbsBar.setForeground(new Color(230, 81, 0));
+        carbsBar.setForeground(UIConstants.PRIMARY_COLOR);
 
         fatsPctLabel = new JLabel("Fats: 0%");
         fatsBar = new JProgressBar(0, 100);
-        fatsBar.setForeground(new Color(106, 27, 154));
+        fatsBar.setForeground(UIConstants.PRIMARY_COLOR);
 
         macroBox.add(createMacroRow(proteinPctLabel, proteinBar));
         macroBox.add(createMacroRow(carbsPctLabel, carbsBar));
@@ -106,6 +110,10 @@ public class NutritionDashboardPanel extends JPanel {
         String[] cols = {"Meal", "Calories (kcal)", "Protein (g)", "Carbs (g)", "Fats (g)"};
         tableModel = new DefaultTableModel(cols, 0);
         JTable table = new JTable(tableModel);
+        table.setFont(UIConstants.FONT_BODY);
+        table.setRowHeight(32);
+        table.getTableHeader().setFont(UIConstants.FONT_BOLD);
+        table.getTableHeader().setBackground(UIConstants.BACKGROUND_COLOR);
         center.add(new JScrollPane(table));
 
         add(center, BorderLayout.CENTER);
@@ -113,14 +121,15 @@ public class NutritionDashboardPanel extends JPanel {
         add(statusLabel, BorderLayout.SOUTH);
     }
 
-    private JPanel createCard(String title, JLabel val, Color col) {
+    private JPanel createCard(String title, JLabel val) {
         JPanel p = new JPanel(new GridLayout(2, 1));
         p.setBackground(Color.WHITE);
-        p.setBorder(new LineBorder(new Color(200, 230, 201), 2));
+        p.setBorder(new LineBorder(UIConstants.BORDER_COLOR, 1));
         JLabel t = new JLabel(title);
-        t.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        val.setFont(new Font("SansSerif", Font.BOLD, 18));
-        val.setForeground(col);
+        t.setFont(UIConstants.FONT_METRIC_LABEL);
+        t.setForeground(UIConstants.TEXT_MUTED);
+        val.setFont(UIConstants.FONT_METRIC_VALUE);
+        val.setForeground(UIConstants.PRIMARY_DARK);
         p.add(t);
         p.add(val);
         return p;
@@ -129,6 +138,7 @@ public class NutritionDashboardPanel extends JPanel {
     private JPanel createMacroRow(JLabel lbl, JProgressBar bar) {
         JPanel r = new JPanel(new BorderLayout(8, 0));
         r.setBackground(Color.WHITE);
+        lbl.setFont(UIConstants.FONT_BODY);
         lbl.setPreferredSize(new Dimension(100, 20));
         r.add(lbl, BorderLayout.WEST);
         r.add(bar, BorderLayout.CENTER);

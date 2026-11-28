@@ -99,7 +99,7 @@ public class FoodManagementPanel extends JPanel {
 
         JLabel subtitle = new JLabel("Manage nutritional food profiles, portions, and baseline macros");
         subtitle.setFont(UIConstants.FONT_BODY);
-        subtitle.setForeground(new Color(230, 240, 250));
+        subtitle.setForeground(new Color(232, 237, 242));
 
         header.add(title, BorderLayout.NORTH);
         header.add(subtitle, BorderLayout.SOUTH);
@@ -111,7 +111,7 @@ public class FoodManagementPanel extends JPanel {
         formContainer.setPreferredSize(new Dimension(340, 0));
         formContainer.setBackground(UIConstants.PANEL_BACKGROUND);
         formContainer.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 224, 230), 1),
+            BorderFactory.createLineBorder(UIConstants.BORDER_COLOR, 1),
             new EmptyBorder(12, 12, 12, 12)
         ));
 
@@ -160,27 +160,27 @@ public class FoodManagementPanel extends JPanel {
 
         btnAdd = new JButton("Add Food");
         btnAdd.setFont(UIConstants.FONT_BOLD);
-        btnAdd.setForeground(new Color(25, 111, 61)); // Crisp Dark Green text
+        btnAdd.setForeground(UIConstants.PRIMARY_DARK);
         btnAdd.setFocusPainted(false);
         btnAdd.addActionListener(e -> onAddFood());
 
         btnUpdate = new JButton("Update Food");
         btnUpdate.setFont(UIConstants.FONT_BOLD);
-        btnUpdate.setForeground(new Color(31, 97, 141)); // Crisp Dark Blue text
+        btnUpdate.setForeground(UIConstants.PRIMARY_DARK);
         btnUpdate.setFocusPainted(false);
         btnUpdate.setEnabled(false);
         btnUpdate.addActionListener(e -> onUpdateFood());
 
         btnDelete = new JButton("Delete Food");
         btnDelete.setFont(UIConstants.FONT_BOLD);
-        btnDelete.setForeground(new Color(176, 58, 46)); // Crisp Dark Red text
+        btnDelete.setForeground(UIConstants.PRIMARY_DARK);
         btnDelete.setFocusPainted(false);
         btnDelete.setEnabled(false);
         btnDelete.addActionListener(e -> onDeleteFood());
 
         btnClear = new JButton("Clear Form");
         btnClear.setFont(UIConstants.FONT_BOLD);
-        btnClear.setForeground(new Color(50, 50, 50));
+        btnClear.setForeground(UIConstants.PRIMARY_DARK);
         btnClear.setFocusPainted(false);
         btnClear.addActionListener(e -> clearFormFields());
 
@@ -212,7 +212,7 @@ public class FoodManagementPanel extends JPanel {
         JPanel tableContainer = new JPanel(new BorderLayout(10, 10));
         tableContainer.setBackground(UIConstants.PANEL_BACKGROUND);
         tableContainer.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 224, 230), 1),
+            BorderFactory.createLineBorder(UIConstants.BORDER_COLOR, 1),
             new EmptyBorder(10, 10, 10, 10)
         ));
 
@@ -264,10 +264,10 @@ public class FoodManagementPanel extends JPanel {
 
         tblFoods = new JTable(tableModel);
         tblFoods.setFont(UIConstants.FONT_BODY);
-        tblFoods.setRowHeight(24);
+        tblFoods.setRowHeight(32);
         tblFoods.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblFoods.getTableHeader().setFont(UIConstants.FONT_BOLD);
-        tblFoods.getTableHeader().setBackground(new Color(235, 240, 245));
+        tblFoods.getTableHeader().setBackground(UIConstants.BACKGROUND_COLOR);
 
         // Center align numerical columns
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();

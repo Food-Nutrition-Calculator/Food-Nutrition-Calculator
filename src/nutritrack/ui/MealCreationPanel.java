@@ -12,6 +12,7 @@ import nutritrack.database.MealDAO;
 import nutritrack.model.FoodItem;
 import nutritrack.model.Meal;
 import nutritrack.service.MealService;
+import nutritrack.utils.UIConstants;
 
 /**
  * Swing GUI Panel for Member 2 – Meal Management & Meal Builder.
@@ -51,14 +52,14 @@ public class MealCreationPanel extends JPanel {
 
     private void initUI() {
         setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(245, 250, 245));
+        setBackground(UIConstants.BACKGROUND_COLOR);
         setBorder(new EmptyBorder(12, 12, 12, 12));
 
         // 1. Top Header Banner
         JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
-        header.setBackground(new Color(27, 94, 32));
+        header.setBackground(UIConstants.PRIMARY_COLOR);
         JLabel title = new JLabel("🍱  Meal Builder & Portion Scaling (Member 2)");
-        title.setFont(new Font("SansSerif", Font.BOLD, 18));
+        title.setFont(UIConstants.FONT_TITLE);
         title.setForeground(Color.WHITE);
         header.add(title);
 
@@ -67,13 +68,14 @@ public class MealCreationPanel extends JPanel {
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setBackground(Color.WHITE);
         controlPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 230, 201), 2),
+            BorderFactory.createLineBorder(UIConstants.BORDER_COLOR, 1),
             new EmptyBorder(10, 15, 10, 15)
         ));
 
         // Row 1: Meal Name
         JPanel row1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         row1.setBackground(Color.WHITE);
+        styleLabels(row1);
         row1.add(new JLabel("Meal Name:"));
         mealNameField = new JTextField("Breakfast", 12);
         row1.add(mealNameField);
@@ -84,6 +86,7 @@ public class MealCreationPanel extends JPanel {
         // Row 2: Food Select & Serving Quantity
         JPanel row2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         row2.setBackground(Color.WHITE);
+        styleLabels(row2);
         row2.add(new JLabel("Select Food:"));
 
         foodDropdown = new JComboBox<>();
@@ -97,18 +100,19 @@ public class MealCreationPanel extends JPanel {
         row2.add(quantityField);
 
         JButton addBtn = new JButton("+ Add to Meal");
-        addBtn.setFont(new Font("SansSerif", Font.BOLD, 12));
-        addBtn.setForeground(new Color(27, 94, 32));
+        addBtn.setFont(UIConstants.FONT_BOLD);
+        addBtn.setForeground(UIConstants.PRIMARY_DARK);
         addBtn.addActionListener(e -> addItemToMeal());
         row2.add(addBtn);
 
         JButton clearBtn = new JButton("Clear Meal");
-        clearBtn.setForeground(new Color(183, 28, 28));
+        clearBtn.setFont(UIConstants.FONT_BOLD);
+        clearBtn.setForeground(UIConstants.PRIMARY_DARK);
         clearBtn.addActionListener(e -> clearMeal());
         row2.add(clearBtn);
 
         JButton saveBtn = new JButton("Save Meal to MySQL");
-        saveBtn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        saveBtn.setFont(UIConstants.FONT_BOLD);
         saveBtn.addActionListener(e -> saveMeal());
         row2.add(saveBtn);
 
@@ -127,22 +131,24 @@ public class MealCreationPanel extends JPanel {
             public boolean isCellEditable(int row, int column) { return false; }
         };
         JTable table = new JTable(tableModel);
-        table.setRowHeight(24);
-        table.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        table.setRowHeight(32);
+        table.setFont(UIConstants.FONT_BODY);
+        table.getTableHeader().setFont(UIConstants.FONT_BOLD);
+        table.getTableHeader().setBackground(UIConstants.BACKGROUND_COLOR);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         // 4. Bottom Total Bar
         JPanel footer = new JPanel(new BorderLayout(10, 5));
-        footer.setBackground(new Color(232, 245, 233));
+        footer.setBackground(UIConstants.PANEL_BACKGROUND);
         footer.setBorder(new EmptyBorder(10, 15, 10, 15));
 
         totalCaloriesLabel = new JLabel("Total Calories: 0.0 kcal");
-        totalCaloriesLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        totalCaloriesLabel.setForeground(new Color(27, 94, 32));
+        totalCaloriesLabel.setFont(UIConstants.FONT_SUBTITLE);
+        totalCaloriesLabel.setForeground(UIConstants.PRIMARY_DARK);
 
         totalMacrosLabel = new JLabel("Protein: 0.0g  |  Carbs: 0.0g  |  Fats: 0.0g");
-        totalMacrosLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        totalMacrosLabel.setForeground(new Color(55, 71, 79));
+        totalMacrosLabel.setFont(UIConstants.FONT_BODY);
+        totalMacrosLabel.setForeground(UIConstants.TEXT_PRIMARY);
 
         footer.add(totalCaloriesLabel, BorderLayout.WEST);
         footer.add(totalMacrosLabel, BorderLayout.EAST);
@@ -151,6 +157,12 @@ public class MealCreationPanel extends JPanel {
                 : "Ready. Meal data will be saved to MySQL.");
         footer.add(statusLabel, BorderLayout.SOUTH);
         add(footer, BorderLayout.SOUTH);
+    }
+
+    private void styleLabels(JPanel panel) {
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JLabel) component.setFont(UIConstants.FONT_BODY);
+        }
     }
 
     public void refreshCatalog() {

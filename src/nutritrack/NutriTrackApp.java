@@ -3,6 +3,7 @@ package nutritrack;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import nutritrack.ui.MainFrame;
+import nutritrack.utils.UIConstants;
 
 public class NutriTrackApp {
 
@@ -16,6 +17,16 @@ public class NutriTrackApp {
                 System.err.println("Could not set system look and feel: "
                         + e.getMessage());
             }
+
+            UIManager.put("defaultFont", UIConstants.FONT_BODY);
+            UIManager.put("Label.font", UIConstants.FONT_BODY);
+            UIManager.put("Button.font", UIConstants.FONT_BOLD);
+            UIManager.put("TextField.font", UIConstants.FONT_BODY);
+            UIManager.put("ComboBox.font", UIConstants.FONT_BODY);
+            UIManager.put("CheckBox.font", UIConstants.FONT_BODY);
+            UIManager.put("Table.font", UIConstants.FONT_BODY);
+            UIManager.put("TableHeader.font", UIConstants.FONT_BOLD);
+            UIManager.put("TabbedPane.font", UIConstants.FONT_BODY);
 
             new MainFrame().setVisible(true);
         });
